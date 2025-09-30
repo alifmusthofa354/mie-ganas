@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Login - Mie Ganas baru tests ini percobaa</title>
+<title>Login - Mie Ganas baru test -1</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
@@ -42,7 +42,7 @@
                         <a href="#" class="font-medium text-blue-600 hover:text-blue-500">
                             Forgot your password?
                         </a>
-                    </div>
+                    </div>sdsd
                 </div>
                 <div>
                     <button type="submit"
