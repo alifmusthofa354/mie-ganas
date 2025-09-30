@@ -5,8 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+<<<<<<< HEAD
     <title>Login - Mie Ganas lala</title>
     <style></style>
+=======
+<title>Login - Mie Ganas baru test -1</title>
+>>>>>>> parent of 71ec050 (testimg dullu ah)
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
