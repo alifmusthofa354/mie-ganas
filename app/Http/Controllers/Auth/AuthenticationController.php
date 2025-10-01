@@ -32,18 +32,7 @@ class AuthenticationController extends Controller
 
             // Redirect user based on their role
             $user = Auth::user();
-            switch ($user->role) {
-                case 'admin':
-                    return redirect()->intended('/admin');
-                case 'cashier':
-                    return redirect()->intended('/cashier');
-                case 'waiter':
-                    return redirect()->intended('/waiter');
-                case 'chef':
-                    return redirect()->intended('/chef');
-                default:
-                    return redirect('/');
-            }
+            return redirect()->intended('/' . $user->role);
         }
 
         throw ValidationException::withMessages([

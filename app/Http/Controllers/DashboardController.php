@@ -15,18 +15,14 @@ class DashboardController extends Controller
         if (Auth::check()) {
             // If user is logged in, redirect to their appropriate dashboard
             $user = Auth::user();
-            switch ($user->role) {
-                case 'admin':
-                    return redirect()->route('admin.dashboard');
-                case 'cashier':
-                    return redirect()->route('cashier.dashboard');
-                case 'waiter':
-                    return redirect()->route('waiter.dashboard');
-                case 'chef':
-                    return redirect()->route('chef.dashboard');
-                default:
-                    return redirect('/');
+            $routeName = $user->role . '.dashboard';
+
+            if (\Illuminate\Support\Facades\Route::has($routeName)) {
+                return redirect()->route($routeName);
             }
+
+            // Default fallback if a named route doesn't exist for the user's role
+            return redirect('/');
         }
 
         // If user is not logged in, show welcome page
