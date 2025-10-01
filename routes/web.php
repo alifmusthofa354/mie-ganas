@@ -39,19 +39,20 @@ Route::post('/login', [AuthenticationController::class, 'login'])
 Route::post('/logout', [AuthenticationController::class, 'logout'])
     ->name('logout');
 
-// Dashboard routes using controllers with role-based middleware
+// Dashboard routes not using middleware to allow guest access 
+// but use laravel gate in AuthServiceProvider
 Route::get('/admin', [AdminDashboardController::class, 'index'])
-    ->middleware('auth', 'checkRole:admin')
+    ->middleware('can:view-admin-dashboard')
     ->name('admin.dashboard');
 
 Route::get('/cashier', [CashierDashboardController::class, 'index'])
-    ->middleware('auth', 'checkRole:cashier')
+    ->middleware('can:view-cashier-dashboard')
     ->name('cashier.dashboard');
 
 Route::get('/waiter', [WaiterDashboardController::class, 'index'])
-    ->middleware('auth', 'checkRole:waiter')
+    ->middleware('can:view-waiter-dashboard')
     ->name('waiter.dashboard');
 
 Route::get('/chef', [ChefDashboardController::class, 'index'])
-    ->middleware('auth', 'checkRole:chef')
+    ->middleware('can:view-chef-dashboard')
     ->name('chef.dashboard');

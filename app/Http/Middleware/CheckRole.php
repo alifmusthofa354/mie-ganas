@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
+// Dashboard routes not using this middleware again to allow guest access 
+// but use laravel gate in AuthServiceProvider
 class CheckRole
 {
     /**
@@ -21,7 +23,7 @@ class CheckRole
         }
 
         $user = Auth::user();
-        
+
         if ($user->role !== $role) {
             abort(403, 'Unauthorized access. You do not have permission to access this page.');
         }
