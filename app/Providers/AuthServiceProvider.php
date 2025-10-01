@@ -22,28 +22,10 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Gate::define('view-admin-dashboard', function (User $user) {
-            return $user->role === 'admin'
+        Gate::define('has-role', function (User $user, string $role, ?string $message = null) {
+            return $user->role === $role
                 ? Response::allow()
-                : Response::deny('Only Admins can access this page.');
-        });
-
-        Gate::define('view-cashier-dashboard', function (User $user) {
-            return $user->role === 'cashier'
-                ? Response::allow()
-                : Response::deny('Only Cashiers can access this page.');
-        });
-
-        Gate::define('view-waiter-dashboard', function (User $user) {
-            return $user->role === 'waiter'
-                ? Response::allow()
-                : Response::deny('Only Waiters can access this page.');
-        });
-
-        Gate::define('view-chef-dashboard', function (User $user) {
-            return $user->role === 'chef'
-                ? Response::allow()
-                : Response::deny('Only Chefs can access this page.');
+                : Response::deny($message ?? 'You do not have permission to access this page.');
         });
     }
 }

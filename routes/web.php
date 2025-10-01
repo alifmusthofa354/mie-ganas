@@ -42,17 +42,17 @@ Route::post('/logout', [AuthenticationController::class, 'logout'])
 // Dashboard routes not using middleware to allow guest access 
 // but use laravel gate in AuthServiceProvider
 Route::get('/admin', [AdminDashboardController::class, 'index'])
-    ->middleware('can:view-admin-dashboard')
+    ->middleware('can:has-role,"admin","Only Admins can access this page."'
     ->name('admin.dashboard');
 
 Route::get('/cashier', [CashierDashboardController::class, 'index'])
-    ->middleware('can:view-cashier-dashboard')
+    ->middleware('can:has-role,"cashier","Only Cashiers can access this page."'
     ->name('cashier.dashboard');
 
 Route::get('/waiter', [WaiterDashboardController::class, 'index'])
-    ->middleware('can:view-waiter-dashboard')
+    ->middleware('can:has-role,"waiter","Only Waiters can access this page."'
     ->name('waiter.dashboard');
 
 Route::get('/chef', [ChefDashboardController::class, 'index'])
-    ->middleware('can:view-chef-dashboard')
+    ->middleware('can:has-role,"chef","Only Chefs can access this page."'
     ->name('chef.dashboard');
