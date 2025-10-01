@@ -1,6 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Cashier\DashboardController as CashierDashboardController;
+use App\Http\Controllers\Waiter\DashboardController as WaiterDashboardController;
+use App\Http\Controllers\Chef\DashboardController as ChefDashboardController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -18,19 +22,8 @@ Route::get("lele", function () {
     return view("lele");
 });
 
-// Dashboard routes
-Route::get('/admin', function () {
-    return view('admin.dashboard');
-})->name('admin.dashboard');
-
-Route::get('/cashier', function () {
-    return view('cashier.dashboard');
-})->name('cashier.dashboard');
-
-Route::get('/waiter', function () {
-    return view('waiter.dashboard');
-})->name('waiter.dashboard');
-
-Route::get('/chef', function () {
-    return view('chef.dashboard');
-})->name('chef.dashboard');
+// Dashboard routes using controllers
+Route::get('/admin', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+Route::get('/cashier', [CashierDashboardController::class, 'index'])->name('cashier.dashboard');
+Route::get('/waiter', [WaiterDashboardController::class, 'index'])->name('waiter.dashboard');
+Route::get('/chef', [ChefDashboardController::class, 'index'])->name('chef.dashboard');
