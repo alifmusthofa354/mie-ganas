@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Traits;
+namespace App\Traits;
 
+use App\Services\SimpleCaptchaService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\ValidationException;
@@ -66,9 +67,8 @@ trait LoginRateLimiter
         RateLimiter::hit($keyUser, $decaySeconds);
         RateLimiter::hit($keyIp, $decaySeconds);
 
-        // Can add CAPTCHA trigger here
+        // Trigger CAPTCHA after 3 failed attempts
         if (RateLimiter::attempts($keyUser) >= 3) {
-            // For example, set a flag in session to show captcha in form
             session(['show_captcha' => true]);
         }
     }
@@ -80,5 +80,55 @@ trait LoginRateLimiter
     {
         RateLimiter::clear($keyUser);
         RateLimiter::clear($keyIp);
+        // Also clear captcha flag and stored result on successful login
+        session()->forget('show_captcha');
+        
+        // Clear any stored captcha result
+        $captchaService = new SimpleCaptchaService();
+        $captchaService->clear();
+    }
+
+    /**
+     * Check if CAPTCHA is required for this request
+     */
+    protected function isCaptchaRequired(): bool
+    {
+        return session('show_captcha', false);
+    }
+
+    /**
+     * Validate CAPTCHA if required
+     */
+    protected function validateCaptcha(Request $request): void
+    {
+        if ($this->isCaptchaRequired()) {
+            $captchaService = new SimpleCaptchaService();
+            
+            $request->validate([
+                'captcha_answer' => 'required|string'
+            ], [
+                'captcha_answer.required' => 'Please complete the CAPTCHA verification.'
+            ]);
+
+            // Verify the CAPTCHA answer
+            if (!$captchaService->verify($request->input('captcha_answer'))) {
+                throw ValidationException::withMessages([
+                    'captcha_answer' => 'The CAPTCHA answer is incorrect. Please try again.'
+                ]);
+            }
+        }
+    }
+
+    /**
+     * Generate CAPTCHA if required
+     */
+    public function getCaptcha(): ?array
+    {
+        if ($this->isCaptchaRequired()) {
+            $captchaService = new SimpleCaptchaService();
+            return $captchaService->generate();
+        }
+        
+        return null;
     }
 }

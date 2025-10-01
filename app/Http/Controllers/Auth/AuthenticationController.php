@@ -17,7 +17,8 @@ class AuthenticationController extends Controller
      */
     public function showLoginForm()
     {
-        return view('auth.login');
+        $captcha = $this->getCaptcha();
+        return view('auth.login', compact('captcha'));
     }
 
     /**
@@ -32,6 +33,9 @@ class AuthenticationController extends Controller
 
         // Check rate limiting
         $rateLimitData = $this->checkLoginRateLimit($request);
+
+        // Validate CAPTCHA if required
+        $this->validateCaptcha($request);
 
         // Process login
         if (Auth::attempt($credentials)) {
