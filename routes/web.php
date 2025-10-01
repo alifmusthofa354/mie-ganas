@@ -1,23 +1,30 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Auth\AuthenticationController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Cashier\DashboardController as CashierDashboardController;
 use App\Http\Controllers\Waiter\DashboardController as WaiterDashboardController;
 use App\Http\Controllers\Chef\DashboardController as ChefDashboardController;
 
-Route::get('/', function () {
-    return view('welcome');
+
+
+// Redirect root path based on authentication status
+Route::get("/", function () {
+    return view("welcome");
+});
+
+Route::get("lele", function () {
+    return view("lele");
 });
 
 Route::get('/nana', function () {
     return view('nana');
 })->name('nana');
 
-Route::get("lele", function () {
-    return view("lele");
-});
+// Redirect root path based on authentication status
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
 // Public login routes
 Route::get('/login', [AuthenticationController::class, 'showLoginForm'])
