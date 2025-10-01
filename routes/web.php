@@ -17,11 +17,11 @@ Route::get("/", function () {
 
 Route::get("lele", function () {
     return view("lele");
-});
+})->name("lele")->middleware('throttle:5,1');
 
 Route::get('/nana', function () {
     return view('nana');
-})->name('nana');
+})->name('nana')->middleware('throttle:10,1');
 
 // Redirect root path based on authentication status
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
