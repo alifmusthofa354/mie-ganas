@@ -40,18 +40,24 @@
             
             @if($captcha)
             <div class="mb-6">
-                <label for="captcha_answer" class="block text-sm font-medium text-[#1b1b18] dark:text-[#EDEDEC] mb-1">
+                <label for="captcha" class="block text-sm font-medium text-[#1b1b18] dark:text-[#EDEDEC] mb-1">
                     {{ $captcha['question'] }}
                 </label>
-                <input 
-                    type="text" 
-                    id="captcha_answer" 
-                    name="{{ $captcha['input_name'] }}" 
-                    class="w-full px-3 py-2 border border-[#e3e3e0] dark:border-[#3E3E3A] rounded-md shadow-sm focus:outline-none focus:ring-[#f53003] focus:border-[#f53003] dark:bg-[#1E1E1C] dark:text-[#EDEDEC]"
-                    required
-                    autocomplete="off"
-                >
-                @error('captcha_answer')
+                <div class="flex items-center gap-3">
+                    <div class="flex-shrink-0">
+                        {!! app('captcha')->img() !!}
+                    </div>
+                    <input 
+                        type="text" 
+                        id="captcha" 
+                        name="{{ $captcha['input_name'] }}" 
+                        class="w-full px-3 py-2 border border-[#e3e3e0] dark:border-[#3E3E3A] rounded-md shadow-sm focus:outline-none focus:ring-[#f53003] focus:border-[#f53003] dark:bg-[#1E1E1C] dark:text-[#EDEDEC]"
+                        required
+                        autocomplete="off"
+                        placeholder="Enter CAPTCHA text"
+                    >
+                </div>
+                @error('captcha')
                     <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                 @enderror
             </div>

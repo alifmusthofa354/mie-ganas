@@ -3,7 +3,7 @@
 namespace App\Providers;
 
 use App\Contracts\CaptchaServiceContract;
-use App\Services\SimpleCaptchaService;
+use App\Services\MewsCaptchaService;
 use Illuminate\Support\ServiceProvider;
 
 class CaptchaServiceProvider extends ServiceProvider
@@ -14,7 +14,7 @@ class CaptchaServiceProvider extends ServiceProvider
     public function register(): void
     {
         // Bind the CAPTCHA service contract to the implementation
-        $this->app->bind(CaptchaServiceContract::class, SimpleCaptchaService::class);
+        $this->app->bind(CaptchaServiceContract::class, MewsCaptchaService::class);
     }
 
     /**

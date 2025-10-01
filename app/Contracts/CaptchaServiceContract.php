@@ -5,7 +5,7 @@ namespace App\Contracts;
 interface CaptchaServiceContract
 {
     /**
-     * Generate a simple math CAPTCHA
+     * Generate a CAPTCHA
      */
     public function generate(): array;
 

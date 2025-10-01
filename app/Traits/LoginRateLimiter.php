@@ -98,15 +98,15 @@ trait LoginRateLimiter
     {
         if ($this->isCaptchaRequired()) {
             $request->validate([
-                'captcha_answer' => 'required|string'
+                'captcha' => 'required|string'
             ], [
-                'captcha_answer.required' => 'Please complete the CAPTCHA verification.'
+                'captcha.required' => 'Please complete the CAPTCHA verification.'
             ]);
 
             // Verify the CAPTCHA answer
-            if (!$captchaService->verify($request->input('captcha_answer'))) {
+            if (!$captchaService->verify($request->input('captcha'))) {
                 throw ValidationException::withMessages([
-                    'captcha_answer' => 'The CAPTCHA answer is incorrect. Please try again.'
+                    'captcha' => 'The CAPTCHA answer is incorrect. Please try again.'
                 ]);
             }
         }
