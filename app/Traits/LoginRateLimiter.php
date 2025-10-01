@@ -2,7 +2,6 @@
 
 namespace App\Traits;
 
-use App\Services\SimpleCaptchaService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\ValidationException;
@@ -80,12 +79,8 @@ trait LoginRateLimiter
     {
         RateLimiter::clear($keyUser);
         RateLimiter::clear($keyIp);
-        // Also clear captcha flag and stored result on successful login
+        // Also clear captcha flag on successful login
         session()->forget('show_captcha');
-        
-        // Clear any stored captcha result
-        $captchaService = new SimpleCaptchaService();
-        $captchaService->clear();
     }
 
     /**
@@ -97,13 +92,11 @@ trait LoginRateLimiter
     }
 
     /**
-     * Validate CAPTCHA if required
+     * Validate CAPTCHA if required - this method will be called with the service instance
      */
-    protected function validateCaptcha(Request $request): void
+    protected function validateCaptchaWithService(Request $request, $captchaService): void
     {
         if ($this->isCaptchaRequired()) {
-            $captchaService = new SimpleCaptchaService();
-            
             $request->validate([
                 'captcha_answer' => 'required|string'
             ], [
@@ -120,12 +113,11 @@ trait LoginRateLimiter
     }
 
     /**
-     * Generate CAPTCHA if required
+     * Generate CAPTCHA if required - this method will be called with the service instance
      */
-    public function getCaptcha(): ?array
+    public function getCaptchaWithService($captchaService): ?array
     {
         if ($this->isCaptchaRequired()) {
-            $captchaService = new SimpleCaptchaService();
             return $captchaService->generate();
         }
         

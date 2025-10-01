@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
-class SimpleCaptchaService
+use App\Contracts\CaptchaServiceContract;
+
+class SimpleCaptchaService implements CaptchaServiceContract
 {
     /**
      * Generate a simple math CAPTCHA

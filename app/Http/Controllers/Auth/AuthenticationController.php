@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Contracts\CaptchaServiceContract;
 use App\Http\Controllers\Controller;
 use App\Traits\LoginRateLimiter;
 use Illuminate\Http\Request;
@@ -12,12 +13,19 @@ class AuthenticationController extends Controller
 {
     use LoginRateLimiter;
 
+    protected $captchaService;
+
+    public function __construct(CaptchaServiceContract $captchaService)
+    {
+        $this->captchaService = $captchaService;
+    }
+
     /**
      * Show the login form.
      */
     public function showLoginForm()
     {
-        $captcha = $this->getCaptcha();
+        $captcha = $this->getCaptchaWithService($this->captchaService);
         return view('auth.login', compact('captcha'));
     }
 
@@ -35,7 +43,7 @@ class AuthenticationController extends Controller
         $rateLimitData = $this->checkLoginRateLimit($request);
 
         // Validate CAPTCHA if required
-        $this->validateCaptcha($request);
+        $this->validateCaptchaWithService($request, $this->captchaService);
 
         // Process login
         if (Auth::attempt($credentials)) {
