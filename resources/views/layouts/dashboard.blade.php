@@ -24,7 +24,16 @@
             <nav>
                 <ul class="flex space-x-4">
                     <li><a href="/" class="text-[#f53003] dark:text-[#FF4433] hover:underline">Home</a></li>
-                    <!-- Navigation links will be added dynamically per role -->
+                    @auth
+                        <li>
+                            <form method="POST" action="{{ route('logout') }}" class="inline">
+                                @csrf
+                                <button type="submit" class="text-[#f53003] dark:text-[#FF4433] hover:underline">
+                                    Logout
+                                </button>
+                            </form>
+                        </li>
+                    @endauth
                 </ul>
             </nav>
         </div>
