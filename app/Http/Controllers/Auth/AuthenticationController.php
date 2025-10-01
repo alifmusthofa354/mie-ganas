@@ -29,7 +29,7 @@ class AuthenticationController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            
+
             // Redirect user based on their role
             $user = Auth::user();
             switch ($user->role) {
@@ -59,7 +59,7 @@ class AuthenticationController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        
-        return redirect('/');
+
+        return redirect('/login');
     }
 }
