@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 
 class DashboardController extends Controller
 {
@@ -17,7 +18,7 @@ class DashboardController extends Controller
             $user = Auth::user();
             $routeName = $user->role . '.dashboard';
 
-            if (\Illuminate\Support\Facades\Route::has($routeName)) {
+            if (Route::has($routeName)) {
                 return redirect()->route($routeName);
             }
 
