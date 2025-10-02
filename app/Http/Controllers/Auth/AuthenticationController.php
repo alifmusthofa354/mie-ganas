@@ -44,20 +44,38 @@ class AuthenticationController extends Controller
         // Check rate limiting
         $rateLimitData = $this->checkLoginRateLimit($request);
 
-        // Check if user account is active
-        $this->checkUserActiveStatus($credentials['email']);
-
         // Validate CAPTCHA if required
         $this->validateCaptchaWithService($request, $this->captchaService);
 
         // Process login
         if (Auth::attempt($credentials)) {
-            // Clear rate limiter on successful login
+            $user = Auth::user();
+            
+            // Check if user account is active after successful authentication
+            if (!$user->is_active) {
+                // Logout user immediately
+                Auth::logout();
+                
+                // Record failed login attempt (user exists but is inactive)
+                $this->recordFailedLoginAttempt(
+                    $rateLimitData['keyUser'], 
+                    $rateLimitData['keyIp'], 
+                    $rateLimitData['decaySeconds']
+                );
+
+                // Dispatch failed login event
+                LoginFailed::dispatch($request->input('email'), $request->ip(), $request->userAgent());
+
+                throw ValidationException::withMessages([
+                    'email' => 'Your account has been deactivated. Please contact administrator.',
+                ]);
+            }
+
+            // Clear rate limiter on successful login (for active users)
             $this->clearRateLimits($rateLimitData['keyUser'], $rateLimitData['keyIp']);
 
             $request->session()->regenerate();
 
-            $user = Auth::user();
             $validRoles = ['admin', 'cashier', 'waiter', 'chef'];
             $role = in_array($user->role, $validRoles) ? $user->role : 'dashboard';
 

@@ -116,20 +116,6 @@ trait LoginRateLimiter
     }
 
     /**
-     * Check if user account is active
-     */
-    protected function checkUserActiveStatus(string $email): void
-    {
-        $user = User::where('email', strtolower($email))->first();
-        
-        if ($user && !$user->is_active) {
-            throw ValidationException::withMessages([
-                'email' => 'Your account has been deactivated. Please contact administrator.',
-            ]);
-        }
-    }
-
-    /**
      * Generate CAPTCHA if required - this method will be called with the service instance
      */
     public function getCaptchaWithService($captchaService): ?array
