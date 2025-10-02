@@ -2,8 +2,8 @@
 
 namespace App\Traits;
 
+use App\Helpers\LoginRateLimiterHelper;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\ValidationException;
 
@@ -31,20 +31,18 @@ trait LoginRateLimiter
         $decaySeconds = config('login.rate_limits.decay_seconds', 60);
 
         // Check if user has reached the limit
-        if (RateLimiter::tooManyAttempts($keyUser, $maxAttemptsUser)) {
-            throw ValidationException::withMessages([
-                'email' => 'Too many login attempts for this account. Please wait ' .
-                    RateLimiter::availableIn($keyUser) . ' seconds.',
-            ]);
-        }
+        LoginRateLimiterHelper::checkRateLimit(
+            $keyUser,
+            $maxAttemptsUser,
+            'Too many login attempts for this account. Please wait '
+        );
 
         // Check if IP has reached global limit
-        if (RateLimiter::tooManyAttempts($keyIp, $maxAttemptsIp)) {
-            throw ValidationException::withMessages([
-                'email' => 'Too many login attempts from this IP. Please wait ' .
-                    RateLimiter::availableIn($keyIp) . ' seconds.',
-            ]);
-        }
+        LoginRateLimiterHelper::checkRateLimit(
+            $keyIp,
+            $maxAttemptsIp,
+            'Too many login attempts from this IP. Please wait '
+        );
 
         // Return the keys so they can be used for incrementing or clearing later
         return [
@@ -64,15 +62,15 @@ trait LoginRateLimiter
     protected function recordFailedLoginAttempt(string $keyUser, string $keyIp, int $decaySeconds)
     {
         // Login failed → hit both limiters
-        RateLimiter::hit($keyUser, $decaySeconds);
-        RateLimiter::hit($keyIp, $decaySeconds);
+        LoginRateLimiterHelper::recordFailedAttempt($keyUser, $decaySeconds);
+        LoginRateLimiterHelper::recordFailedAttempt($keyIp, $decaySeconds);
 
         // Get attempts required to trigger CAPTCHA from config
         $captchaAfterAttempts = config('login.rate_limits.captcha_after_attempts', 3);
 
-        // Trigger CAPTCHA after 3 failed attempts
-        if (RateLimiter::attempts($keyUser) >= $captchaAfterAttempts) {
-            session(['show_captcha' => true]);
+        // Trigger CAPTCHA after configured number of failed attempts
+        if (LoginRateLimiterHelper::getAttempts($keyUser) >= $captchaAfterAttempts) {
+            Session::put(config('login.session.captcha_flag'), true);
         }
     }
 
@@ -81,8 +79,8 @@ trait LoginRateLimiter
      */
     protected function clearRateLimits(string $keyUser, string $keyIp)
     {
-        RateLimiter::clear($keyUser);
-        RateLimiter::clear($keyIp);
+        LoginRateLimiterHelper::clearRateLimit($keyUser);
+        LoginRateLimiterHelper::clearRateLimit($keyIp);
         // Also clear captcha flag on successful login
         Session::forget(config('login.session.captcha_flag'));
     }
