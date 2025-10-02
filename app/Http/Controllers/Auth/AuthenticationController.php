@@ -44,6 +44,9 @@ class AuthenticationController extends Controller
         // Check rate limiting
         $rateLimitData = $this->checkLoginRateLimit($request);
 
+        // Check if user account is active
+        $this->checkUserActiveStatus($credentials['email']);
+
         // Validate CAPTCHA if required
         $this->validateCaptchaWithService($request, $this->captchaService);
 

@@ -3,6 +3,7 @@
 namespace App\Traits;
 
 use App\Helpers\LoginRateLimiterHelper;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\ValidationException;
@@ -67,7 +68,7 @@ trait LoginRateLimiter
 
         // Get attempts required to trigger CAPTCHA from config
         $captchaAfterAttempts = config('login.rate_limits.captcha_after_attempts', 3);
-
+        
         // Trigger CAPTCHA after configured number of failed attempts
         if (LoginRateLimiterHelper::getAttempts($keyUser) >= $captchaAfterAttempts) {
             Session::put(config('login.session.captcha_flag'), true);
@@ -115,6 +116,20 @@ trait LoginRateLimiter
     }
 
     /**
+     * Check if user account is active
+     */
+    protected function checkUserActiveStatus(string $email): void
+    {
+        $user = User::where('email', strtolower($email))->first();
+        
+        if ($user && !$user->is_active) {
+            throw ValidationException::withMessages([
+                'email' => 'Your account has been deactivated. Please contact administrator.',
+            ]);
+        }
+    }
+
+    /**
      * Generate CAPTCHA if required - this method will be called with the service instance
      */
     public function getCaptchaWithService($captchaService): ?array
@@ -122,7 +137,7 @@ trait LoginRateLimiter
         if ($this->isCaptchaRequired()) {
             return $captchaService->generate();
         }
-
+        
         return null;
     }
 }
