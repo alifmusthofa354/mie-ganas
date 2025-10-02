@@ -47,8 +47,11 @@ class AuthenticationController extends Controller
         // Validate CAPTCHA if required
         $this->validateCaptchaWithService($request, $this->captchaService);
 
+        // Prepare login credentials with remember option
+        $remember = $request->has('remember');
+        
         // Process login
-        if (Auth::attempt($credentials)) {
+        if (Auth::attempt($credentials, $remember)) {
             $user = Auth::user();
             
             // Check if user account is active after successful authentication

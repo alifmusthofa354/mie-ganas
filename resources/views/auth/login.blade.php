@@ -63,6 +63,20 @@
             </div>
             @endif
             
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center">
+                    <input 
+                        id="remember_me" 
+                        name="remember" 
+                        type="checkbox" 
+                        class="h-4 w-4 text-[#f53003] focus:ring-[#f53003] border-gray-300 rounded dark:bg-[#1E1E1C] dark:border-[#3E3E3A]"
+                    >
+                    <label for="remember_me" class="ml-2 block text-sm text-[#1b1b18] dark:text-[#EDEDEC]">
+                        Remember me
+                    </label>
+                </div>
+            </div>
+            
             <div class="mb-4">
                 <button 
                     type="submit" 
