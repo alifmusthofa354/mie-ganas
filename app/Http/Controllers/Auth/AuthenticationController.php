@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Contracts\CaptchaServiceContract;
+use App\Events\LoginFailed;
+use App\Events\LoginSuccessful;
 use App\Http\Controllers\Controller;
 use App\Traits\LoginRateLimiter;
 use Illuminate\Http\Request;
@@ -56,6 +58,9 @@ class AuthenticationController extends Controller
             $validRoles = ['admin', 'cashier', 'waiter', 'chef'];
             $role = in_array($user->role, $validRoles) ? $user->role : 'dashboard';
 
+            // Dispatch successful login event
+            LoginSuccessful::dispatch($user, $request->ip(), $request->userAgent());
+
             return redirect()->intended('/' . $role);
         }
 
@@ -65,6 +70,9 @@ class AuthenticationController extends Controller
             $rateLimitData['keyIp'], 
             $rateLimitData['decaySeconds']
         );
+
+        // Dispatch failed login event
+        LoginFailed::dispatch($request->input('email'), $request->ip(), $request->userAgent());
 
         throw ValidationException::withMessages([
             'email' => 'Invalid email or password.',
