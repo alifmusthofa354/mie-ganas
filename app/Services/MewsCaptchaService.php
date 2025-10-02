@@ -14,11 +14,12 @@ class MewsCaptchaService implements CaptchaServiceContract
     public function generate(): array
     {
         // Store the CAPTCHA status in session so we know it's been generated
-        Session::put('captcha_generated', true);
+        Session::put(config('login.session.captcha_generated'), true);
         
         return [
             'question' => 'Please enter the text shown in the image below',
-            'input_name' => 'captcha'
+            'input_name' => 'captcha',
+            'image_html' => Captcha::img() // Return the HTML for the CAPTCHA image
         ];
     }
 
@@ -31,7 +32,7 @@ class MewsCaptchaService implements CaptchaServiceContract
         $isValid = Captcha::check($userInput);
         
         // Clear the generated flag after verification
-        Session::forget('captcha_generated');
+        Session::forget(config('login.session.captcha_generated'));
         
         return $isValid;
     }
@@ -41,6 +42,6 @@ class MewsCaptchaService implements CaptchaServiceContract
      */
     public function clear()
     {
-        Session::forget('captcha_generated');
+        Session::forget(config('login.session.captcha_generated'));
     }
 }

@@ -45,7 +45,7 @@
                 </label>
                 <div class="flex items-center gap-3">
                     <div class="flex-shrink-0">
-                        {!! app('captcha')->img() !!}
+                        {!! $captcha['image_html'] !!}
                     </div>
                     <input 
                         type="text" 
