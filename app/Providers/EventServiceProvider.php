@@ -6,6 +6,7 @@ use App\Events\LoginFailed;
 use App\Events\LoginSuccessful;
 use App\Listeners\LogFailedLoginAttempt;
 use App\Listeners\LogSuccessfulLogin;
+use App\Listeners\UpdateLastLogin;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -25,6 +26,7 @@ class EventServiceProvider extends ServiceProvider
         ],
         LoginSuccessful::class => [
             LogSuccessfulLogin::class,
+            UpdateLastLogin::class,
         ],
     ];
 

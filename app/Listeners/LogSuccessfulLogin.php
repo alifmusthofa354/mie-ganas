@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\LoginSuccessful;
+use App\Models\User;
 use Illuminate\Support\Facades\Log;
 
 class LogSuccessfulLogin

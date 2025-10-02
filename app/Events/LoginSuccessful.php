@@ -2,9 +2,9 @@
 
 namespace App\Events;
 
+use App\Models\User;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Auth\Authenticatable;
 
 class LoginSuccessful
 {
@@ -14,7 +14,7 @@ class LoginSuccessful
     public $ip;
     public $userAgent;
 
-    public function __construct(Authenticatable $user, $ip, $userAgent = null)
+    public function __construct(User $user, $ip, $userAgent = null)
     {
         $this->user = $user;
         $this->ip = $ip;
