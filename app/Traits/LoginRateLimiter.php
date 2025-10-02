@@ -4,6 +4,7 @@ namespace App\Traits;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\ValidationException;
 
 trait LoginRateLimiter
@@ -20,14 +21,14 @@ trait LoginRateLimiter
         $email = strtolower($request->input('email'));
 
         // Account-specific key (IP + email)
-        $keyUser = 'login-user:' . $ip . '|' . $email;
+        $keyUser = 'login_attempts_user_' . sha1($ip . '|' . $email);
         // Global key per IP
-        $keyIp = 'login-ip:' . $ip;
+        $keyIp = 'login_attempts_ip_' . sha1($ip);
 
-        // Attempt limits
-        $maxAttemptsUser = 5;   // per user per IP
-        $maxAttemptsIp = 20;    // per IP for all accounts
-        $decaySeconds = 60;     // reset after 60 seconds
+        // Get limits from configuration
+        $maxAttemptsUser = config('login.rate_limits.user_attempts', 5);
+        $maxAttemptsIp = config('login.rate_limits.ip_attempts', 20);
+        $decaySeconds = config('login.rate_limits.decay_seconds', 60);
 
         // Check if user has reached the limit
         if (RateLimiter::tooManyAttempts($keyUser, $maxAttemptsUser)) {
@@ -66,8 +67,11 @@ trait LoginRateLimiter
         RateLimiter::hit($keyUser, $decaySeconds);
         RateLimiter::hit($keyIp, $decaySeconds);
 
+        // Get attempts required to trigger CAPTCHA from config
+        $captchaAfterAttempts = config('login.rate_limits.captcha_after_attempts', 3);
+
         // Trigger CAPTCHA after 3 failed attempts
-        if (RateLimiter::attempts($keyUser) >= 3) {
+        if (RateLimiter::attempts($keyUser) >= $captchaAfterAttempts) {
             session(['show_captcha' => true]);
         }
     }
@@ -80,7 +84,7 @@ trait LoginRateLimiter
         RateLimiter::clear($keyUser);
         RateLimiter::clear($keyIp);
         // Also clear captcha flag on successful login
-        session()->forget('show_captcha');
+        Session::forget(config('login.session.captcha_flag'));
     }
 
     /**
@@ -88,7 +92,7 @@ trait LoginRateLimiter
      */
     protected function isCaptchaRequired(): bool
     {
-        return session('show_captcha', false);
+        return Session::get(config('login.session.captcha_flag'), false);
     }
 
     /**
@@ -120,7 +124,7 @@ trait LoginRateLimiter
         if ($this->isCaptchaRequired()) {
             return $captchaService->generate();
         }
-        
+
         return null;
     }
 }
