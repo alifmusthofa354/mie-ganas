@@ -7,7 +7,10 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Cashier\DashboardController as CashierDashboardController;
 use App\Http\Controllers\Waiter\DashboardController as WaiterDashboardController;
 use App\Http\Controllers\Chef\DashboardController as ChefDashboardController;
-
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\MenuController;
+use App\Http\Controllers\Admin\OrderController;
 
 
 // Redirect root path based on authentication status
@@ -56,3 +59,20 @@ Route::get('/waiter', [WaiterDashboardController::class, 'index'])
 Route::get('/chef', [ChefDashboardController::class, 'index'])
     ->middleware('can:has-role,"chef","Only Chefs can access this page."')
     ->name('chef.dashboard');
+
+// Admin management routes
+Route::get('/admin/users', [UserController::class, 'index'])
+    ->middleware('can:has-role,"admin","Only Admins can access this page."')
+    ->name('admin.users');
+
+Route::get('/admin/reports', [ReportController::class, 'index'])
+    ->middleware('can:has-role,"admin","Only Admins can access this page."')
+    ->name('admin.reports');
+
+Route::get('/admin/menu', [MenuController::class, 'index'])
+    ->middleware('can:has-role,"admin","Only Admins can access this page."')
+    ->name('admin.menu');
+
+Route::get('/admin/orders', [OrderController::class, 'index'])
+    ->middleware('can:has-role,"admin","Only Admins can access this page."')
+    ->name('admin.orders');
