@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\CategoriesController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Auth\AuthenticationController;
@@ -44,9 +45,6 @@ Route::post('/logout', [AuthenticationController::class, 'logout'])
 
 // Dashboard routes not using middleware to allow guest access 
 // but use laravel gate in AuthServiceProvider
-Route::get('/admin', [AdminDashboardController::class, 'index'])
-    ->middleware('can:has-role,"admin","Only Admins can access this page."')
-    ->name('admin.dashboard');
 
 Route::get('/cashier', [CashierDashboardController::class, 'index'])
     ->middleware('can:has-role,"cashier","Only Cashiers can access this page."')
@@ -61,18 +59,28 @@ Route::get('/chef', [ChefDashboardController::class, 'index'])
     ->name('chef.dashboard');
 
 // Admin management routes
-Route::get('/admin/users', [UserController::class, 'index'])
-    ->middleware('can:has-role,"admin","Only Admins can access this page."')
-    ->name('admin.users');
+// Grouping all routes have prefix '/admin', nama rute 'admin.',
+// and middleware otorization 'can:has-role,"admin",...'
+Route::middleware('can:has-role,"admin","Only Admins can access this page."')
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
 
-Route::get('/admin/reports', [ReportController::class, 'index'])
-    ->middleware('can:has-role,"admin","Only Admins can access this page."')
-    ->name('admin.reports');
+        // Route: /admin (Nama: admin.dashboard)
+        Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
 
-Route::get('/admin/menu', [MenuController::class, 'index'])
-    ->middleware('can:has-role,"admin","Only Admins can access this page."')
-    ->name('admin.menu');
+        // Route: /admin/menu (Nama: admin.menu)
+        Route::get('/menu', [MenuController::class, 'index'])->name('menu');
 
-Route::get('/admin/orders', [OrderController::class, 'index'])
-    ->middleware('can:has-role,"admin","Only Admins can access this page."')
-    ->name('admin.orders');
+        // Route: /admin/categories (Nama: admin.categories)
+        Route::get('/categories', [CategoriesController::class, 'index'])->name('categories');
+
+        // Route: /admin/users (Nama: admin.users)
+        Route::get('/users', [UserController::class, 'index'])->name('users');
+
+        // Route: /admin/reports (Nama: admin.reports)
+        Route::get('/reports', [ReportController::class, 'index'])->name('reports');
+
+        // Route: /admin/orders (Nama: admin.orders)
+        Route::get('/orders', [OrderController::class, 'index'])->name('orders');
+    });
