@@ -31,23 +31,28 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
                 {{-- KARTU PRODUK 1: Nasi Goreng --}}
-                {{-- Tambahkan kelas flex, flex-col, justify-between, dan min-h-[300px] pada kartu --}}
                 <div
                     class="bg-[#FDFDFC] dark:bg-[#1E1E1C] rounded-lg shadow border border-gray-200 dark:border-gray-700 flex flex-col justify-between min-h-[300px]">
                     <div class="p-4 flex-grow flex flex-col">
-                        <div class="flex justify-between items-start">
-                            <div class="flex-grow">
-                                {{-- Kotak gambar dengan kelas object-cover untuk memastikan gambar mengisi kotak dengan benar --}}
-                                <div class="w-full h-36 mx-auto mb-3 overflow-hidden rounded-md">
-                                    <img src="{{ asset('images/nasi-goreng.jpg') }}" alt="Nasi Goreng"
-                                        class="w-full h-full object-cover">
-                                </div>
-                                <h3 class="text-lg font-bold text-[#1b1b18] dark:text-[#EDEDEC]">Nasi Goreng</h3>
-                                <p class="text-sm text-[#706f6c] dark:text-[#A1A09A] mb-4">Mie Ganas Special Nasi Goreng</p>
+
+                        {{-- DIV BARU UNTUK GAMBAR DAN STATUS (DIBUAT RELATIVE) --}}
+                        <div class="relative mb-3">
+                            <div class="w-full h-36 mx-auto overflow-hidden rounded-md">
+                                <img src="{{ asset('images/nasi-goreng.jpg') }}" alt="Nasi Goreng"
+                                    class="w-full h-full object-cover">
                             </div>
+
+                            {{-- STATUS (DIBUAT ABSOLUTE, TOP-2, RIGHT-2, dan Z-10) --}}
                             <span
-                                class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Active</span>
+                                class="absolute top-2 right-2 z-10 px-2 py-1 text-xs font-semibold rounded-full bg-green-500 text-white shadow-md">Active</span>
+                            {{-- Catatan: Saya ubah warna bg status agar lebih terlihat mengambang di atas gambar --}}
                         </div>
+
+                        <div class="flex-grow">
+                            <h3 class="text-lg font-bold text-[#1b1b18] dark:text-[#EDEDEC]">Nasi Goreng</h3>
+                            <p class="text-sm text-[#706f6c] dark:text-[#A1A09A] mb-4">Mie Ganas Special Nasi Goreng</p>
+                        </div>
+
                         {{-- Div harga dan tombol aksi --}}
                         <div class="mt-auto flex justify-between items-center">
                             <span class="text-xl font-bold text-[#f53003] dark:text-[#FF4433]">Rp 25,000</span>
@@ -73,23 +78,21 @@
                     </div>
                 </div>
 
-                {{-- KARTU PRODUK 2: Mie Ayam (Deskripsi lebih pendek) --}}
-                {{-- Tambahkan kelas flex, flex-col, justify-between, dan min-h-[300px] pada kartu --}}
+                {{-- KARTU PRODUK 2: Mie Ayam --}}
                 <div
                     class="bg-[#FDFDFC] dark:bg-[#1E1E1C] rounded-lg shadow border border-gray-200 dark:border-gray-700 flex flex-col justify-between min-h-[300px]">
                     <div class="p-4 flex-grow flex flex-col">
-                        <div class="flex justify-between items-start">
-                            <div class="flex-grow">
-                                <div class="w-full h-36 mx-auto mb-3 overflow-hidden rounded-md">
-                                    <img src="{{ asset('images/mie-ayam.jpg') }}" alt="Mie Ayam"
-                                        class="w-full h-full object-cover">
-                                </div>
-                                <h3 class="text-lg font-bold text-[#1b1b18] dark:text-[#EDEDEC]">Mie Ayam</h3>
-                                <p class="text-sm text-[#706f6c] dark:text-[#A1A09A] mb-4">Ayam original dengan kuah gurih
-                                </p>
+                        <div class="relative mb-3">
+                            <div class="w-full h-36 mx-auto overflow-hidden rounded-md">
+                                <img src="{{ asset('images/mie-ayam.jpg') }}" alt="Mie Ayam"
+                                    class="w-full h-full object-cover">
                             </div>
                             <span
-                                class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Active</span>
+                                class="absolute top-2 right-2 z-10 px-2 py-1 text-xs font-semibold rounded-full bg-green-500 text-white shadow-md">Active</span>
+                        </div>
+                        <div class="flex-grow">
+                            <h3 class="text-lg font-bold text-[#1b1b18] dark:text-[#EDEDEC]">Mie Ayam</h3>
+                            <p class="text-sm text-[#706f6c] dark:text-[#A1A09A] mb-4">Ayam original dengan kuah gurih</p>
                         </div>
                         <div class="mt-auto flex justify-between items-center">
                             <span class="text-xl font-bold text-[#f53003] dark:text-[#FF4433]">Rp 22,000</span>
@@ -116,21 +119,20 @@
                 </div>
 
                 {{-- KARTU PRODUK 3: Bakso --}}
-                {{-- Tambahkan kelas flex, flex-col, justify-between, dan min-h-[300px] pada kartu --}}
                 <div
                     class="bg-[#FDFDFC] dark:bg-[#1E1E1C] rounded-lg shadow border border-gray-200 dark:border-gray-700 flex flex-col justify-between min-h-[300px]">
                     <div class="p-4 flex-grow flex flex-col">
-                        <div class="flex justify-between items-start">
-                            <div class="flex-grow">
-                                <div class="w-full h-36 mx-auto mb-3 overflow-hidden rounded-md">
-                                    <img src="{{ asset('images/bakso.jpg') }}" alt="Bakso"
-                                        class="w-full h-full object-cover">
-                                </div>
-                                <h3 class="text-lg font-bold text-[#1b1b18] dark:text-[#EDEDEC]">Bakso</h3>
-                                <p class="text-sm text-[#706f6c] dark:text-[#A1A09A] mb-4">Bakso urat dengan kuah bening</p>
+                        <div class="relative mb-3">
+                            <div class="w-full h-36 mx-auto overflow-hidden rounded-md">
+                                <img src="{{ asset('images/bakso.jpg') }}" alt="Bakso"
+                                    class="w-full h-full object-cover">
                             </div>
                             <span
-                                class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Inactive</span>
+                                class="absolute top-2 right-2 z-10 px-2 py-1 text-xs font-semibold rounded-full bg-yellow-500 text-white shadow-md">Inactive</span>
+                        </div>
+                        <div class="flex-grow">
+                            <h3 class="text-lg font-bold text-[#1b1b18] dark:text-[#EDEDEC]">Bakso</h3>
+                            <p class="text-sm text-[#706f6c] dark:text-[#A1A09A] mb-4">Bakso urat dengan kuah bening</p>
                         </div>
                         <div class="mt-auto flex justify-between items-center">
                             <span class="text-xl font-bold text-[#f53003] dark:text-[#FF4433]">Rp 18,000</span>
@@ -157,22 +159,20 @@
                 </div>
 
                 {{-- KARTU PRODUK 4: Sate Ayam --}}
-                {{-- Tambahkan kelas flex, flex-col, justify-between, dan min-h-[300px] pada kartu --}}
                 <div
                     class="bg-[#FDFDFC] dark:bg-[#1E1E1C] rounded-lg shadow border border-gray-200 dark:border-gray-700 flex flex-col justify-between min-h-[300px]">
                     <div class="p-4 flex-grow flex flex-col">
-                        <div class="flex justify-between items-start">
-                            <div class="flex-grow">
-                                <div class="w-full h-36 mx-auto mb-3 overflow-hidden rounded-md">
-                                    <img src="{{ asset('images/sate-ayam.jpg') }}" alt="Sate Ayam"
-                                        class="w-full h-full object-cover">
-                                </div>
-                                <h3 class="text-lg font-bold text-[#1b1b18] dark:text-[#EDEDEC]">Sate Ayam</h3>
-                                <p class="text-sm text-[#706f6c] dark:text-[#A1A09A] mb-4">Sate ayam dengan bumbu kacang
-                                </p>
+                        <div class="relative mb-3">
+                            <div class="w-full h-36 mx-auto overflow-hidden rounded-md">
+                                <img src="{{ asset('images/sate-ayam.jpg') }}" alt="Sate Ayam"
+                                    class="w-full h-full object-cover">
                             </div>
                             <span
-                                class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Active</span>
+                                class="absolute top-2 right-2 z-10 px-2 py-1 text-xs font-semibold rounded-full bg-green-500 text-white shadow-md">Active</span>
+                        </div>
+                        <div class="flex-grow">
+                            <h3 class="text-lg font-bold text-[#1b1b18] dark:text-[#EDEDEC]">Sate Ayam</h3>
+                            <p class="text-sm text-[#706f6c] dark:text-[#A1A09A] mb-4">Sate ayam dengan bumbu kacang</p>
                         </div>
                         <div class="mt-auto flex justify-between items-center">
                             <span class="text-xl font-bold text-[#f53003] dark:text-[#FF4433]">Rp 20,000</span>
@@ -199,21 +199,20 @@
                 </div>
 
                 {{-- KARTU PRODUK 5: Es Teh --}}
-                {{-- Tambahkan kelas flex, flex-col, justify-between, dan min-h-[300px] pada kartu --}}
                 <div
                     class="bg-[#FDFDFC] dark:bg-[#1E1E1C] rounded-lg shadow border border-gray-200 dark:border-gray-700 flex flex-col justify-between min-h-[300px]">
                     <div class="p-4 flex-grow flex flex-col">
-                        <div class="flex justify-between items-start">
-                            <div class="flex-grow">
-                                <div class="w-full h-36 mx-auto mb-3 overflow-hidden rounded-md">
-                                    <img src="{{ asset('images/es-teh.jpg') }}" alt="Es Teh"
-                                        class="w-full h-full object-cover">
-                                </div>
-                                <h3 class="text-lg font-bold text-[#1b1b18] dark:text-[#EDEDEC]">Es Teh</h3>
-                                <p class="text-sm text-[#706f6c] dark:text-[#A1A09A] mb-4">Es teh manis segar</p>
+                        <div class="relative mb-3">
+                            <div class="w-full h-36 mx-auto overflow-hidden rounded-md">
+                                <img src="{{ asset('images/es-teh.jpg') }}" alt="Es Teh"
+                                    class="w-full h-full object-cover">
                             </div>
                             <span
-                                class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Active</span>
+                                class="absolute top-2 right-2 z-10 px-2 py-1 text-xs font-semibold rounded-full bg-green-500 text-white shadow-md">Active</span>
+                        </div>
+                        <div class="flex-grow">
+                            <h3 class="text-lg font-bold text-[#1b1b18] dark:text-[#EDEDEC]">Es Teh</h3>
+                            <p class="text-sm text-[#706f6c] dark:text-[#A1A09A] mb-4">Es teh manis segar</p>
                         </div>
                         <div class="mt-auto flex justify-between items-center">
                             <span class="text-xl font-bold text-[#f53003] dark:text-[#FF4433]">Rp 5,000</span>
@@ -240,21 +239,20 @@
                 </div>
 
                 {{-- KARTU PRODUK 6: Jus Alpukat --}}
-                {{-- Tambahkan kelas flex, flex-col, justify-between, dan min-h-[300px] pada kartu --}}
                 <div
                     class="bg-[#FDFDFC] dark:bg-[#1E1E1C] rounded-lg shadow border border-gray-200 dark:border-gray-700 flex flex-col justify-between min-h-[300px]">
                     <div class="p-4 flex-grow flex flex-col">
-                        <div class="flex justify-between items-start">
-                            <div class="flex-grow">
-                                <div class="w-full h-36 mx-auto mb-3 overflow-hidden rounded-md">
-                                    <img src="{{ asset('images/jus-alpukat.jpg') }}" alt="Jus Alpukat"
-                                        class="w-full h-full object-cover">
-                                </div>
-                                <h3 class="text-lg font-bold text-[#1b1b18] dark:text-[#EDEDEC]">Jus Alpukat</h3>
-                                <p class="text-sm text-[#706f6c] dark:text-[#A1A09A] mb-4">Jus alpukat original</p>
+                        <div class="relative mb-3">
+                            <div class="w-full h-36 mx-auto overflow-hidden rounded-md">
+                                <img src="{{ asset('images/jus-alpukat.jpg') }}" alt="Jus Alpukat"
+                                    class="w-full h-full object-cover">
                             </div>
                             <span
-                                class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Active</span>
+                                class="absolute top-2 right-2 z-10 px-2 py-1 text-xs font-semibold rounded-full bg-green-500 text-white shadow-md">Active</span>
+                        </div>
+                        <div class="flex-grow">
+                            <h3 class="text-lg font-bold text-[#1b1b18] dark:text-[#EDEDEC]">Jus Alpukat</h3>
+                            <p class="text-sm text-[#706f6c] dark:text-[#A1A09A] mb-4">Jus alpukat original</p>
                         </div>
                         <div class="mt-auto flex justify-between items-center">
                             <span class="text-xl font-bold text-[#f53003] dark:text-[#FF4433]">Rp 15,000</span>
