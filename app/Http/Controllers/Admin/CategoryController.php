@@ -16,10 +16,13 @@ class CategoryController extends Controller
     {
         $query = Category::query();
 
-        // Handle search
+        // Handle search - sanitize input to prevent any injection
         if ($request->has('search') && $request->search !== '') {
-            $query->where('name', 'like', '%' . $request->search . '%')
-                ->orWhere('description', 'like', '%' . $request->search . '%');
+            $searchTerm = $request->search;
+            $query->where(function($q) use ($searchTerm) {
+                $q->where('name', 'LIKE', "%{$searchTerm}%")
+                  ->orWhere('description', 'LIKE', "%{$searchTerm}%");
+            });
         }
 
         $categories = $query->orderBy('display_order')->paginate(6)->withQueryString();
@@ -59,7 +62,9 @@ class CategoryController extends Controller
             'is_active' => $request->is_active,
         ]);
 
-        return redirect()->route('admin.categories.index')->with('success', 'Category ' . $request->name . ' created successfully.');
+        // Sanitize category name to prevent XSS in flash messages
+        $categoryName = e($category->name);
+        return redirect()->route('admin.categories.index')->with('success', "Category {$categoryName} created successfully.");
     }
 
     /**
@@ -103,7 +108,9 @@ class CategoryController extends Controller
             'is_active' => $request->is_active,
         ]);
 
-        return redirect()->route('admin.categories.index')->with('success', 'Category ' . $request->name . ' updated successfully.');
+        // Sanitize category name to prevent XSS in flash messages
+        $categoryName = e($request->name);
+        return redirect()->route('admin.categories.index')->with('success', "Category {$categoryName} updated successfully.");
     }
 
     /**
