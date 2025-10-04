@@ -67,4 +67,12 @@ class Category extends Model
         });
     }
 
+    /**
+     * Get the menus for the category.
+     */
+    public function menus()
+    {
+        return $this->hasMany(Menu::class);
+    }
+
 }
