@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreCategoryRequest;
+use App\Http\Requests\UpdateCategoryRequest;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -41,25 +43,18 @@ class CategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreCategoryRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:100|unique:categories,name',
-            'description' => 'nullable|string',
-            'icon' => 'nullable|string|max:50',
-            'display_order' => 'nullable|integer|min:0',
-            'is_active' => 'required|boolean',
-        ]);
+        $validated = $request->validated();
+        $slug = Str::slug($validated['name']);
 
-        $slug = Str::slug($request->name);
-
-        Category::create([
-            'name' => $request->name,
+        $category = Category::create([
+            'name' => $validated['name'],
             'slug' => $slug,
-            'description' => $request->description,
-            'icon' => $request->icon,
-            'display_order' => $request->display_order ?? 0,
-            'is_active' => $request->is_active,
+            'description' => $validated['description'],
+            'icon' => $validated['icon'],
+            'display_order' => $validated['display_order'] ?? 0,
+            'is_active' => $validated['is_active'],
         ]);
 
         // Sanitize category name to prevent XSS in flash messages
@@ -87,25 +82,18 @@ class CategoryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Category $category)
+    public function update(UpdateCategoryRequest $request, Category $category)
     {
-        $request->validate([
-            'name' => 'required|string|max:100|unique:categories,name,' . $category->id, // The 'unique' rule is ignored if the name belongs to the current category
-            'description' => 'nullable|string',
-            'icon' => 'nullable|string|max:50',
-            'display_order' => 'nullable|integer|min:0',
-            'is_active' => 'required|boolean',
-        ]);
-
-        $slug = Str::slug($request->name);
+        $validated = $request->validated();
+        $slug = Str::slug($validated['name']);
 
         $category->update([
-            'name' => $request->name,
+            'name' => $validated['name'],
             'slug' => $slug,
-            'description' => $request->description,
-            'icon' => $request->icon,
-            'display_order' => $request->display_order ?? 0,
-            'is_active' => $request->is_active,
+            'description' => $validated['description'],
+            'icon' => $validated['icon'],
+            'display_order' => $validated['display_order'] ?? 0,
+            'is_active' => $validated['is_active'],
         ]);
 
         // Sanitize category name to prevent XSS in flash messages
