@@ -47,13 +47,15 @@ class Category extends Model
         // Sanitize data before saving
         static::saving(function ($category) {
             if ($category->name) {
-                $category->name = strip_tags($category->name);
+                $category->name = e(strip_tags($category->name), false); // Escape HTML but preserve basic entities
             }
             if ($category->description) {
-                $category->description = strip_tags($category->description);
+                // For description, we might want to allow some HTML tags, so let's just strip potentially dangerous ones
+                $category->description = strip_tags($category->description, '<p><br><strong><em><ul><ol><li>');
+                $category->description = e($category->description, false);
             }
             if ($category->icon) {
-                $category->icon = strip_tags($category->icon);
+                $category->icon = e(strip_tags($category->icon), false);
             }
         });
 

@@ -23,10 +23,10 @@ class CategoryController extends Controller
 
         // Handle search - sanitize input to prevent any injection
         if ($request->has('search') && $request->search !== '') {
-            $searchTerm = strip_tags($request->search); // Sanitize input
+            $searchTerm = trim(strip_tags($request->search)); // Sanitize and trim input
             $query->where(function ($q) use ($searchTerm) {
-                $q->where('name', 'LIKE', "%{$searchTerm}%")
-                    ->orWhere('description', 'LIKE', "%{$searchTerm}%");
+                $q->where('name', 'LIKE', '%' . $this->dbEscapeLikeString($searchTerm) . '%')
+                    ->orWhere('description', 'LIKE', '%' . $this->dbEscapeLikeString($searchTerm) . '%');
             });
         }
 
@@ -121,5 +121,20 @@ class CategoryController extends Controller
 
         // 3. Redirect and display the category name in the success message
         return redirect()->route('admin.categories.index')->with('success', "Category '{$categoryName}' deleted successfully.");
+    }
+
+    /**
+     * Escape special characters in a string for use in a LIKE query.
+     *
+     * @param string $string
+     * @return string
+     */
+    private function dbEscapeLikeString(string $string): string
+    {
+        return str_replace(
+            ['\\', '%', '_'],
+            ['\\\\', '\\%', '\\_'],
+            $string
+        );
     }
 }
