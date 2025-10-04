@@ -9,3 +9,18 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+
+/* Mengatur warna latar belakang (Shadow) dan warna teks autofill */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active {
+    /* Bagian untuk Latar Belakang (Contoh Anda: Hitam 90%) */
+    -webkit-box-shadow: 0 0 0px 1000px rgba(26, 25, 25, 0.094) inset !important;
+    
+    /* BAGIAN BARU: Mengatur warna teks menjadi Putih */
+    -webkit-text-fill-color: #EDEDEC !important; /* Gunakan warna putih atau terang */
+    
+    /* Memastikan tidak ada transisi warna tiba-tiba */
+    transition: background-color 5000s ease-in-out 0s;
+}
