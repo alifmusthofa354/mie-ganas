@@ -69,8 +69,8 @@ Route::middleware('can:has-role,"admin","Only Admins can access this page."')
         // Route: /admin (Nama: admin.dashboard)
         Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
 
-        // Route: /admin/menu (Nama: admin.menu)
-        Route::get('/menu', [MenuController::class, 'index'])->name('menu');
+        // Route: /admin/menus (Nama: admin.menus)
+        Route::resource('menus', MenuController::class);
 
         // Route: /admin/categories (Nama: admin.categories)
         Route::resource('categories', CategoryController::class)->except(['show']);
