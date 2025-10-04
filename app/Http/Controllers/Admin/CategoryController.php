@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateCategoryRequest;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class CategoryController extends Controller
@@ -17,22 +18,32 @@ class CategoryController extends Controller
      */
     public function index(Request $request)
     {
-        Gate::authorize('viewAny', Category::class);
+        try {
+            Gate::authorize('viewAny', Category::class);
 
-        $query = Category::query();
+            $query = Category::query();
 
-        // Handle search - sanitize input to prevent any injection
-        if ($request->has('search') && $request->search !== '') {
-            $searchTerm = trim(strip_tags($request->search)); // Sanitize and trim input
-            $query->where(function ($q) use ($searchTerm) {
-                $q->where('name', 'LIKE', '%' . $this->dbEscapeLikeString($searchTerm) . '%')
-                    ->orWhere('description', 'LIKE', '%' . $this->dbEscapeLikeString($searchTerm) . '%');
-            });
+            // Handle search - sanitize input to prevent any injection
+            if ($request->has('search') && $request->search !== '') {
+                $searchTerm = trim(strip_tags($request->search)); // Sanitize and trim input
+                $query->where(function ($q) use ($searchTerm) {
+                    $q->where('name', 'LIKE', '%' . $this->dbEscapeLikeString($searchTerm) . '%')
+                        ->orWhere('description', 'LIKE', '%' . $this->dbEscapeLikeString($searchTerm) . '%');
+                });
+            }
+
+            $categories = $query->orderBy('display_order')->paginate(6)->withQueryString();
+
+            return view('admin.categories', compact('categories'));
+        } catch (\Exception $e) {
+            Log::error('Error retrieving categories', [
+                'error' => $e->getMessage(),
+                'user_id' => auth()->id()
+            ]);
+            
+            return redirect()->back()
+                ->withErrors(['error' => 'There was an error retrieving categories.']);
         }
-
-        $categories = $query->orderBy('display_order')->paginate(6)->withQueryString();
-
-        return view('admin.categories', compact('categories'));
     }
 
     /**
@@ -49,21 +60,39 @@ class CategoryController extends Controller
      */
     public function store(StoreCategoryRequest $request)
     {
-        $validated = $request->validated();
-        $slug = Str::slug($validated['name']);
+        try {
+            $validated = $request->validated();
+            $slug = Str::slug($validated['name']);
 
-        $category = Category::create([
-            'name' => $validated['name'],
-            'slug' => $slug,
-            'description' => $validated['description'],
-            'icon' => $validated['icon'],
-            'display_order' => $validated['display_order'] ?? 0,
-            'is_active' => $validated['is_active'],
-        ]);
+            $category = Category::create([
+                'name' => $validated['name'],
+                'slug' => $slug,
+                'description' => $validated['description'],
+                'icon' => $validated['icon'],
+                'display_order' => $validated['display_order'] ?? 0,
+                'is_active' => $validated['is_active'],
+            ]);
 
-        // Sanitize category name to prevent XSS in flash messages
-        $categoryName = e($category->name);
-        return redirect()->route('admin.categories.index')->with('success', "Category {$categoryName} created successfully.");
+            // Log the successful creation
+            Log::info('Category created successfully', [
+                'id' => $category->id,
+                'name' => $category->name,
+                'user_id' => auth()->id()
+            ]);
+
+            // Sanitize category name to prevent XSS in flash messages
+            $categoryName = e($category->name);
+            return redirect()->route('admin.categories.index')->with('success', "Category {$categoryName} created successfully.");
+        } catch (\Exception $e) {
+            Log::error('Error creating category', [
+                'error' => $e->getMessage(),
+                'user_id' => auth()->id()
+            ]);
+            
+            return redirect()->back()
+                ->withErrors(['error' => 'There was an error creating the category.'])
+                ->withInput();
+        }
     }
 
     /**
@@ -89,21 +118,40 @@ class CategoryController extends Controller
      */
     public function update(UpdateCategoryRequest $request, Category $category)
     {
-        $validated = $request->validated();
-        $slug = Str::slug($validated['name']);
+        try {
+            $validated = $request->validated();
+            $slug = Str::slug($validated['name']);
 
-        $category->update([
-            'name' => $validated['name'],
-            'slug' => $slug,
-            'description' => $validated['description'],
-            'icon' => $validated['icon'],
-            'display_order' => $validated['display_order'] ?? 0,
-            'is_active' => $validated['is_active'],
-        ]);
+            $category->update([
+                'name' => $validated['name'],
+                'slug' => $slug,
+                'description' => $validated['description'],
+                'icon' => $validated['icon'],
+                'display_order' => $validated['display_order'] ?? 0,
+                'is_active' => $validated['is_active'],
+            ]);
 
-        // Sanitize category name to prevent XSS in flash messages
-        $categoryName = e($validated['name']);
-        return redirect()->route('admin.categories.index')->with('success', "Category {$categoryName} updated successfully.");
+            // Log the successful update
+            Log::info('Category updated successfully', [
+                'id' => $category->id,
+                'name' => $category->name,
+                'user_id' => auth()->id()
+            ]);
+
+            // Sanitize category name to prevent XSS in flash messages
+            $categoryName = e($validated['name']);
+            return redirect()->route('admin.categories.index')->with('success', "Category {$categoryName} updated successfully.");
+        } catch (\Exception $e) {
+            Log::error('Error updating category', [
+                'error' => $e->getMessage(),
+                'category_id' => $category->id,
+                'user_id' => auth()->id()
+            ]);
+            
+            return redirect()->back()
+                ->withErrors(['error' => 'There was an error updating the category.'])
+                ->withInput();
+        }
     }
 
     /**
@@ -111,16 +159,34 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        Gate::authorize('delete', $category);
+        try {
+            Gate::authorize('delete', $category);
 
-        // 1. Retrieve the category name before deletion
-        $categoryName = e($category->name); // Sanitize to prevent XSS in flash messages
+            // 1. Retrieve the category name before deletion
+            $categoryName = e($category->name); // Sanitize to prevent XSS in flash messages
 
-        // 2. Delete the category from the database
-        $category->delete();
+            // 2. Delete the category from the database
+            $category->delete();
 
-        // 3. Redirect and display the category name in the success message
-        return redirect()->route('admin.categories.index')->with('success', "Category '{$categoryName}' deleted successfully.");
+            // Log the successful deletion
+            Log::info('Category deleted successfully', [
+                'id' => $category->id,
+                'name' => $categoryName,
+                'user_id' => auth()->id()
+            ]);
+
+            // 3. Redirect and display the category name in the success message
+            return redirect()->route('admin.categories.index')->with('success', "Category '{$categoryName}' deleted successfully.");
+        } catch (\Exception $e) {
+            Log::error('Error deleting category', [
+                'error' => $e->getMessage(),
+                'category_id' => $category->id,
+                'user_id' => auth()->id()
+            ]);
+            
+            return redirect()->route('admin.categories.index')
+                ->withErrors(['error' => 'There was an error deleting the category.']);
+        }
     }
 
     /**
