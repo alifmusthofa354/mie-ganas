@@ -16,6 +16,8 @@ class CategoryController extends Controller
      */
     public function index(Request $request)
     {
+        $this->authorize('viewAny', Category::class);
+
         $query = Category::query();
 
         // Handle search - sanitize input to prevent any injection
@@ -37,6 +39,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
+        $this->authorize('create', Category::class);
         return view('admin.categories.create');
     }
 
@@ -76,6 +79,7 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
+        $this->authorize('update', $category);
         return view('admin.categories.edit', compact('category'));
     }
 
@@ -106,6 +110,8 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
+        $this->authorize('delete', $category);
+
         // 1. Retrieve the category name before deletion
         $categoryName = $category->name;
 
