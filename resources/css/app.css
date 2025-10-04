@@ -10,17 +10,33 @@
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
 
-/* Mengatur warna latar belakang (Shadow) dan warna teks autofill */
+/* LIGHT MODE (Global / Default) */
+/* Biasanya autofill bawaan browser (putih/biru muda) sudah cukup bagus di mode terang,
+   atau Anda bisa atur warna teks menjadi hitam di sini jika diperlukan. */
+
+
+
+/*
+ * Mengatur style untuk input autofill agar background menjadi transparan
+ * dan warna teks sesuai dengan tema (light/dark).
+ */
+
+/* Terapkan background transparan untuk light & dark mode */
 input:-webkit-autofill,
-input:-webkit-autofill:hover, 
-input:-webkit-autofill:focus, 
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
-    /* Bagian untuk Latar Belakang (Contoh Anda: Hitam 90%) */
-    -webkit-box-shadow: 0 0 0px 1000px rgba(26, 25, 25, 0.094) inset !important;
-    
-    /* BAGIAN BARU: Mengatur warna teks menjadi Putih */
-    -webkit-text-fill-color: #EDEDEC !important; /* Gunakan warna putih atau terang */
-    
-    /* Memastikan tidak ada transisi warna tiba-tiba */
+    -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
+    /* Trik transisi untuk mencegah browser menimpa background */
     transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Atur warna teks untuk light mode */
+input:-webkit-autofill {
+    -webkit-text-fill-color: #1b1b18 !important;
+}
+
+/* Atur warna teks untuk dark mode */
+.dark input:-webkit-autofill {
+    -webkit-text-fill-color: #EDEDEC !important;
 }
