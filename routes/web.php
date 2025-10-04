@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Admin\CategoriesController;
+use App\Http\Controllers\Admin\CategoryController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Auth\AuthenticationController;
@@ -73,7 +73,7 @@ Route::middleware('can:has-role,"admin","Only Admins can access this page."')
         Route::get('/menu', [MenuController::class, 'index'])->name('menu');
 
         // Route: /admin/categories (Nama: admin.categories)
-        Route::get('/categories', [CategoriesController::class, 'index'])->name('categories');
+        Route::resource('categories', CategoryController::class)->except(['show']);
 
         // Route: /admin/users (Nama: admin.users)
         Route::get('/users', [UserController::class, 'index'])->name('users');
