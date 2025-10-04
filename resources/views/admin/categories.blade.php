@@ -95,6 +95,11 @@
                 @endforelse
             </div>
 
+            <!-- Pagination -->
+            <div class="mt-6">
+                {{ $categories->withQueryString()->links() }}
+            </div>
+
             <!-- Delete Confirmation Modals -->
             @foreach ($categories as $category)
                 <div id="delete-modal-{{ $category->id }}" tabindex="-1"

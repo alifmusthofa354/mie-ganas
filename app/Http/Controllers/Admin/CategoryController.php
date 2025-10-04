@@ -15,15 +15,15 @@ class CategoryController extends Controller
     public function index(Request $request)
     {
         $query = Category::query();
-        
+
         // Handle search
         if ($request->has('search') && $request->search !== '') {
             $query->where('name', 'like', '%' . $request->search . '%')
-                  ->orWhere('description', 'like', '%' . $request->search . '%');
+                ->orWhere('description', 'like', '%' . $request->search . '%');
         }
-        
-        $categories = $query->orderBy('display_order')->get();
-        
+
+        $categories = $query->orderBy('display_order')->paginate(6)->withQueryString();
+
         return view('admin.categories', compact('categories'));
     }
 
