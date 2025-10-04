@@ -7,6 +7,7 @@ use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth; // ADDED: Menggunakan Facade Auth eksplisit untuk menghindari error Intelephense
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -38,9 +39,10 @@ class CategoryController extends Controller
         } catch (\Exception $e) {
             Log::error('Error retrieving categories', [
                 'error' => $e->getMessage(),
-                'user_id' => auth()->id()
+                // FIX: Menggunakan Auth::id() untuk mendapatkan user ID, mengatasi peringatan Intelephense
+                'user_id' => Auth::id()
             ]);
-            
+
             return redirect()->back()
                 ->withErrors(['error' => 'There was an error retrieving categories.']);
         }
@@ -77,7 +79,8 @@ class CategoryController extends Controller
             Log::info('Category created successfully', [
                 'id' => $category->id,
                 'name' => $category->name,
-                'user_id' => auth()->id()
+                // FIX: Menggunakan Auth::id() untuk mendapatkan user ID, mengatasi peringatan Intelephense
+                'user_id' => Auth::id()
             ]);
 
             // Sanitize category name to prevent XSS in flash messages
@@ -86,9 +89,10 @@ class CategoryController extends Controller
         } catch (\Exception $e) {
             Log::error('Error creating category', [
                 'error' => $e->getMessage(),
-                'user_id' => auth()->id()
+                // FIX: Menggunakan Auth::id() untuk mendapatkan user ID, mengatasi peringatan Intelephense
+                'user_id' => Auth::id()
             ]);
-            
+
             return redirect()->back()
                 ->withErrors(['error' => 'There was an error creating the category.'])
                 ->withInput();
@@ -135,7 +139,8 @@ class CategoryController extends Controller
             Log::info('Category updated successfully', [
                 'id' => $category->id,
                 'name' => $category->name,
-                'user_id' => auth()->id()
+                // FIX: Menggunakan Auth::id() untuk mendapatkan user ID, mengatasi peringatan Intelephense
+                'user_id' => Auth::id()
             ]);
 
             // Sanitize category name to prevent XSS in flash messages
@@ -145,9 +150,10 @@ class CategoryController extends Controller
             Log::error('Error updating category', [
                 'error' => $e->getMessage(),
                 'category_id' => $category->id,
-                'user_id' => auth()->id()
+                // FIX: Menggunakan Auth::id() untuk mendapatkan user ID, mengatasi peringatan Intelephense
+                'user_id' => Auth::id()
             ]);
-            
+
             return redirect()->back()
                 ->withErrors(['error' => 'There was an error updating the category.'])
                 ->withInput();
@@ -172,7 +178,8 @@ class CategoryController extends Controller
             Log::info('Category deleted successfully', [
                 'id' => $category->id,
                 'name' => $categoryName,
-                'user_id' => auth()->id()
+                // FIX: Menggunakan Auth::id() untuk mendapatkan user ID, mengatasi peringatan Intelephense
+                'user_id' => Auth::id()
             ]);
 
             // 3. Redirect and display the category name in the success message
@@ -181,9 +188,10 @@ class CategoryController extends Controller
             Log::error('Error deleting category', [
                 'error' => $e->getMessage(),
                 'category_id' => $category->id,
-                'user_id' => auth()->id()
+                // FIX: Menggunakan Auth::id() untuk mendapatkan user ID, mengatasi peringatan Intelephense
+                'user_id' => Auth::id()
             ]);
-            
+
             return redirect()->route('admin.categories.index')
                 ->withErrors(['error' => 'There was an error deleting the category.']);
         }
