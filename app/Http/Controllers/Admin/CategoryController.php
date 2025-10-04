@@ -20,7 +20,7 @@ class CategoryController extends Controller
 
         // Handle search - sanitize input to prevent any injection
         if ($request->has('search') && $request->search !== '') {
-            $searchTerm = $request->search;
+            $searchTerm = strip_tags($request->search); // Sanitize input
             $query->where(function($q) use ($searchTerm) {
                 $q->where('name', 'LIKE', "%{$searchTerm}%")
                   ->orWhere('description', 'LIKE', "%{$searchTerm}%");
