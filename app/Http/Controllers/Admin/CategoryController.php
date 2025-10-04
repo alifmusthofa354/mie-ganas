@@ -113,7 +113,7 @@ class CategoryController extends Controller
         $this->authorize('delete', $category);
 
         // 1. Retrieve the category name before deletion
-        $categoryName = $category->name;
+        $categoryName = e($category->name); // Sanitize to prevent XSS in flash messages
 
         // 2. Delete the category from the database
         $category->delete();
