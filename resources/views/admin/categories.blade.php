@@ -39,7 +39,7 @@
                             class="block w-full p-4 pl-10 text-sm text-[#1b1b18] border border-gray-300 rounded-lg bg-[#FDFDFD] focus:ring-[#f53003] focus:border-[#f53003] dark:bg-[#1E1E1C] dark:border-[#3E3E3A] dark:placeholder-[#A1A09A] dark:text-[#EDEDEC] dark:focus:ring-[#f53003] dark:focus:border-[#f53003] autofill:shadow-[inset_0_0_0px_1000px_rgba(0,0,0,0.9)]"
                             placeholder="Search categories...">
                         <button type="submit"
-                            class="text-white absolute right-2.5 bottom-2.5 bg-[#f53003] hover:bg-[#d92902] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Search</button>
+                            class="text-gray-900 absolute right-2.5 bottom-2.5 bg-gray-200 hover:bg-gray-300 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-800 dark:text-white">Search</button>
                     </div>
                 </div>
             </form>
