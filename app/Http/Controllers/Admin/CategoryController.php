@@ -7,6 +7,7 @@ use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 
 class CategoryController extends Controller
@@ -16,16 +17,16 @@ class CategoryController extends Controller
      */
     public function index(Request $request)
     {
-        $this->authorize('viewAny', Category::class);
+        Gate::authorize('viewAny', Category::class);
 
         $query = Category::query();
 
         // Handle search - sanitize input to prevent any injection
         if ($request->has('search') && $request->search !== '') {
             $searchTerm = strip_tags($request->search); // Sanitize input
-            $query->where(function($q) use ($searchTerm) {
+            $query->where(function ($q) use ($searchTerm) {
                 $q->where('name', 'LIKE', "%{$searchTerm}%")
-                  ->orWhere('description', 'LIKE', "%{$searchTerm}%");
+                    ->orWhere('description', 'LIKE', "%{$searchTerm}%");
             });
         }
 
@@ -39,7 +40,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        $this->authorize('create', Category::class);
+        Gate::authorize('create', Category::class);
         return view('admin.categories.create');
     }
 
@@ -79,7 +80,7 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
-        $this->authorize('update', $category);
+        Gate::authorize('update', $category);
         return view('admin.categories.edit', compact('category'));
     }
 
@@ -101,7 +102,7 @@ class CategoryController extends Controller
         ]);
 
         // Sanitize category name to prevent XSS in flash messages
-        $categoryName = e($request->name);
+        $categoryName = e($validated['name']);
         return redirect()->route('admin.categories.index')->with('success', "Category {$categoryName} updated successfully.");
     }
 
@@ -110,7 +111,7 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        $this->authorize('delete', $category);
+        Gate::authorize('delete', $category);
 
         // 1. Retrieve the category name before deletion
         $categoryName = e($category->name); // Sanitize to prevent XSS in flash messages
