@@ -16,7 +16,7 @@ use App\Http\Controllers\Admin\OrderController;
 
 // Redirect root path based on authentication status
 Route::get("/", function () {
-    return view("customer.home");
+    return view("customer.table");
 });
 
 Route::get("lele", function () {
