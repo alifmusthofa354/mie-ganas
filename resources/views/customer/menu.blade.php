@@ -26,17 +26,6 @@
                 <input type="text" id="search-menu" placeholder="Cari menu..."
                     class="w-full px-4 py-2 text-sm text-[#1b1b18] border border-gray-300 rounded-lg bg-[#FDFDFC] focus:ring-[#f53003] focus:border-[#f53003] dark:bg-[#1E1E1C] dark:border-[#3E3E3A] dark:placeholder-[#A1A09A] dark:text-[#EDEDEC] dark:focus:ring-[#f53003] dark:focus:border-[#f53003]">
             </div>
-
-            <!-- Category Filter -->
-            <div>
-                <select id="category-filter"
-                    class="px-4 py-2 text-sm text-[#1b1b18] border border-gray-300 rounded-lg bg-[#FDFDFC] focus:ring-[#f53003] focus:border-[#f53003] dark:bg-[#1E1E1C] dark:border-[#3E3E3A] dark:placeholder-[#A1A09A] dark:text-[#EDEDEC] dark:focus:ring-[#f53003] dark:focus:border-[#f53003]">
-                    <option value="all">Semua Kategori</option>
-                    @foreach($categories as $category)
-                        <option value="{{ $category->name }}">{{ $category->name }}</option>
-                    @endforeach
-                </select>
-            </div>
         </div>
     </div>
 
@@ -47,12 +36,12 @@
                 data-category="all">
                 Semua Menu
             </button>
-            @foreach($categories as $category)
-            <button
-                class="category-tab px-4 py-2 bg-gray-200 hover:bg-gray-300 text-[#1b1b18] rounded-lg whitespace-nowrap dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-[#EDEDEC]"
-                data-category="{{ $category->name }}">
-                {{ $category->name }}
-            </button>
+            @foreach ($categories as $category)
+                <button
+                    class="category-tab px-4 py-2 bg-gray-200 hover:bg-gray-300 text-[#1b1b18] rounded-lg whitespace-nowrap dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-[#EDEDEC]"
+                    data-category="{{ $category->name }}">
+                    {{ $category->name }}
+                </button>
             @endforeach
         </div>
     </div>
@@ -60,42 +49,44 @@
     <!-- Menu Items Display -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="menu-container">
         @forelse($menuItems as $menu)
-        <div class="menu-item bg-white dark:bg-[#1E1E1C] rounded-lg shadow border border-gray-200 dark:border-gray-700 overflow-hidden"
-            data-category="{{ $menu->category->name ?? 'uncategorized' }}">
-            <div class="h-48 overflow-hidden">
-                @if($menu->image)
-                    <img src="{{ asset($menu->image) }}" alt="{{ $menu->name }}" class="w-full h-full object-cover">
-                @else
-                    <img src="https://placehold.co/400x300" alt="{{ $menu->name }}" class="w-full h-full object-cover">
-                @endif
-            </div>
-            <div class="p-4">
-                <h3 class="text-lg font-bold text-[#1b1b18] dark:text-[#EDEDEC]">{{ $menu->name }}</h3>
-                <p class="text-sm text-[#706f6c] dark:text-[#A1A09A] mb-2">{{ $menu->description }}</p>
-                <div class="flex justify-between items-center mb-3">
-                    <span class="text-xl font-bold text-[#f53003] dark:text-[#FF4433]">Rp {{ number_format($menu->price, 0, ',', '.') }}</span>
-                    @if($menu->status === 'active')
-                        <span class="text-xs px-2 py-1 bg-green-500 text-white rounded">Tersedia</span>
+            <div class="menu-item bg-white dark:bg-[#1E1E1C] rounded-lg shadow border border-gray-200 dark:border-gray-700 overflow-hidden"
+                data-category="{{ $menu->category->name ?? 'uncategorized' }}">
+                <div class="h-48 overflow-hidden">
+                    @if ($menu->image)
+                        <img src="{{ asset($menu->image) }}" alt="{{ $menu->name }}" class="w-full h-full object-cover">
                     @else
-                        <span class="text-xs px-2 py-1 bg-red-500 text-white rounded">Habis</span>
+                        <img src="https://placehold.co/400x300" alt="{{ $menu->name }}"
+                            class="w-full h-full object-cover">
                     @endif
                 </div>
-                @if($menu->status === 'active')
-                    <button
-                        class="add-to-cart w-full px-4 py-2 bg-[#f53003] hover:bg-[#d92902] text-white rounded-lg transition duration-300">
-                        Pesan
-                    </button>
-                @else
-                    <button class="w-full px-4 py-2 bg-gray-400 text-white rounded-lg cursor-not-allowed" disabled>
-                        Habis
-                    </button>
-                @endif
+                <div class="p-4">
+                    <h3 class="text-lg font-bold text-[#1b1b18] dark:text-[#EDEDEC]">{{ $menu->name }}</h3>
+                    <p class="text-sm text-[#706f6c] dark:text-[#A1A09A] mb-2">{{ $menu->description }}</p>
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-xl font-bold text-[#f53003] dark:text-[#FF4433]">Rp
+                            {{ number_format($menu->price, 0, ',', '.') }}</span>
+                        @if ($menu->status === 'active')
+                            <span class="text-xs px-2 py-1 bg-green-500 text-white rounded">Tersedia</span>
+                        @else
+                            <span class="text-xs px-2 py-1 bg-red-500 text-white rounded">Habis</span>
+                        @endif
+                    </div>
+                    @if ($menu->status === 'active')
+                        <button
+                            class="add-to-cart w-full px-4 py-2 bg-[#f53003] hover:bg-[#d92902] text-white rounded-lg transition duration-300">
+                            Pesan
+                        </button>
+                    @else
+                        <button class="w-full px-4 py-2 bg-gray-400 text-white rounded-lg cursor-not-allowed" disabled>
+                            Habis
+                        </button>
+                    @endif
+                </div>
             </div>
-        </div>
         @empty
-        <div class="col-span-full text-center py-12">
-            <p class="text-[#706f6c] dark:text-[#A1A09A] text-lg">Menu tidak ditemukan</p>
-        </div>
+            <div class="col-span-full text-center py-12">
+                <p class="text-[#706f6c] dark:text-[#A1A09A] text-lg">Menu tidak ditemukan</p>
+            </div>
         @endforelse
     </div>
 
