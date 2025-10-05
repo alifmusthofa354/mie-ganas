@@ -26,57 +26,15 @@
             <a href="/" class="flex items-center">
                 <span class="self-center text-xl font-semibold whitespace-nowrap dark:text-white">Mie Ganas</span>
             </a>
-            
+
             <nav>
                 <ul class="flex space-x-6">
-                    <!-- Customer name display when authenticated -->
-                    @auth
-                        <li class="flex items-center">
-                            <span class="text-[#1b1b18] dark:text-[#EDEDEC] mr-4">
-                                Halo, {{ Auth::user()->name }}
-                            </span>
-                        </li>
-                        <li>
-                            <a href="/history" 
-                               class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-[#1b1b18] rounded-lg transition duration-300 text-sm dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-[#EDEDEC]">
-                                Riwayat
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ route('dashboard') }}" 
-                               class="px-4 py-2 bg-[#f53003] hover:bg-[#d92902] text-white rounded-lg transition duration-300 text-sm">
-                                Dashboard
-                            </a>
-                        </li>
-                        <li>
-                            <form method="POST" action="{{ route('logout') }}" class="inline">
-                                @csrf
-                                <button type="submit" 
-                                        class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition duration-300 text-sm">
-                                    Logout
-                                </button>
-                            </form>
-                        </li>
-                    @else
-                        <!-- For unauthenticated users (e.g., via QR code), we'll show a generic name -->
-                        <li class="flex items-center">
-                            <span class="text-[#1b1b18] dark:text-[#EDEDEC] mr-4">
-                                Selamat Datang
-                            </span>
-                        </li>
-                        <li>
-                            <a href="/history" 
-                               class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-[#1b1b18] rounded-lg transition duration-300 text-sm dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-[#EDEDEC]">
-                                Riwayat
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ route('login') }}" 
-                               class="px-4 py-2 bg-[#f53003] hover:bg-[#d92902] text-white rounded-lg transition duration-300 text-sm">
-                                Login
-                            </a>
-                        </li>
-                    @endauth
+                    <li>
+                        <a href="/history"
+                            class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-[#1b1b18] rounded-lg transition duration-300 text-sm dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-[#EDEDEC]">
+                            Riwayat
+                        </a>
+                    </li>
                 </ul>
             </nav>
         </div>
@@ -88,47 +46,12 @@
     </main>
 
     <!-- Footer -->
-    <footer class="w-full bg-white dark:bg-[#161615] py-8 px-6 border-t border-[#e3e3e0] dark:border-[#3E3E3A]">
-        <div class="container mx-auto">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <div>
-                    <h3 class="text-lg font-bold text-[#1b1b18] dark:text-[#EDEDEC] mb-4">Mie Ganas</h3>
-                    <p class="text-sm text-[#706f6c] dark:text-[#A1A09A]">
-                        The best Indonesian noodle restaurant serving delicious and spicy noodles for passionate food lovers.
-                    </p>
-                </div>
-                
-                <div>
-                    <h4 class="text-md font-semibold text-[#1b1b18] dark:text-[#EDEDEC] mb-4">Quick Links</h4>
-                    <ul class="space-y-2">
-                        <li><a href="/" class="text-sm text-[#706f6c] dark:text-[#A1A09A] hover:text-[#f53003] dark:hover:text-[#FF4433]">Home</a></li>
-                        <li><a href="/menu" class="text-sm text-[#706f6c] dark:text-[#A1A09A] hover:text-[#f53003] dark:hover:text-[#FF4433]">Menu</a></li>
-                        <li><a href="/about" class="text-sm text-[#706f6c] dark:text-[#A1A09A] hover:text-[#f53003] dark:hover:text-[#FF4433]">About</a></li>
-                        <li><a href="/contact" class="text-sm text-[#706f6c] dark:text-[#A1A09A] hover:text-[#f53003] dark:hover:text-[#FF4433]">Contact</a></li>
-                    </ul>
-                </div>
-                
-                <div>
-                    <h4 class="text-md font-semibold text-[#1b1b18] dark:text-[#EDEDEC] mb-4">Contact</h4>
-                    <ul class="space-y-2 text-sm text-[#706f6c] dark:text-[#A1A09A]">
-                        <li>Email: info@mieganas.com</li>
-                        <li>Phone: +62 123 4567 890</li>
-                        <li>Address: Jl. Noodle Street No. 123, Indonesia</li>
-                    </ul>
-                </div>
-                
-                <div>
-                    <h4 class="text-md font-semibold text-[#1b1b18] dark:text-[#EDEDEC] mb-4">Opening Hours</h4>
-                    <ul class="space-y-2 text-sm text-[#706f6c] dark:text-[#A1A09A]">
-                        <li>Monday - Sunday: 10:00 AM - 10:00 PM</li>
-                        <li>Saturday - Sunday: 10:00 AM - 11:00 PM</li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="border-t border-[#e3e3e0] dark:border-[#3E3E3A] mt-8 pt-6 text-center">
-                <p class="text-sm text-[#706f6c] dark:text-[#A1A09A]">© {{ date('Y') }} Mie Ganas. All rights reserved.</p>
-            </div>
+    <footer class="w-full bg-white dark:bg-[#121212] py-6 px-6 border-t border-red-500/20 dark:border-red-600/30">
+        <div class="container mx-auto max-w-7xl text-center">
+            <p class="text-sm text-gray-500 dark:text-gray-400">
+                © {{ date('Y') }} <span class="font-semibold text-red-600 dark:text-red-500">Mie Ganas.</span> Semua
+                Hak Dilindungi.
+            </p>
         </div>
     </footer>
 
