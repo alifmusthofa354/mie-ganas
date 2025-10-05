@@ -35,7 +35,7 @@ class CategoryController extends Controller
 
             $categories = $query->orderBy('display_order')->paginate(6)->withQueryString();
 
-            return view('admin.categories', compact('categories'));
+            return view('admin.categories.index', compact('categories'));
         } catch (\Exception $e) {
             Log::error('Error retrieving categories', [
                 'error' => $e->getMessage(),
