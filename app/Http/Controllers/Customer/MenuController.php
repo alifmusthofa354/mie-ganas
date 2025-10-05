@@ -21,12 +21,18 @@ class MenuController extends Controller
         }
 
         // Fetch all categories from database
-        $categories = Category::where('is_active', true)->get();
-        
+        $categories = Category::select('id', 'name', 'slug', 'is_active')
+            ->where('is_active', true)
+            ->get();
+
         // Fetch menu items with category relationship, including only active items
-        $menuItems = Menu::with('category')
-                         ->where('status', 'active')
-                         ->get();
+        $menuItems = Menu::select('id', 'name', 'price', 'status', 'image', 'category_id')
+            ->with([
+                'category' => function ($query) {
+                    $query->select('id', 'name');
+                }
+            ])
+            ->get();
 
         $tableNumber = Session::get('customer_table_number');
         $customerName = Session::get('customer_name', 'Customer');
