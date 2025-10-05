@@ -8,7 +8,7 @@
         <div class="flex justify-between items-center">
             <div>
                 <h2 class="text-lg font-bold">Meja Anda: #{{ session('customer_table_number', 'N/A') }}</h2>
-                <p class="text-sm opacity-80">Selamat datang di Mie Ganas!</p>
+                <p class="text-sm opacity-80">Selamat menikmati hidangan Anda!</p>
             </div>
             <div class="text-right">
                 <span class="inline-block px-3 py-1 bg-white/20 rounded-full text-sm">
@@ -32,9 +32,9 @@
                 <select id="category-filter"
                     class="px-4 py-2 text-sm text-[#1b1b18] border border-gray-300 rounded-lg bg-[#FDFDFC] focus:ring-[#f53003] focus:border-[#f53003] dark:bg-[#1E1E1C] dark:border-[#3E3E3A] dark:placeholder-[#A1A09A] dark:text-[#EDEDEC] dark:focus:ring-[#f53003] dark:focus:border-[#f53003]">
                     <option value="all">Semua Kategori</option>
-                    <option value="mie">Mie</option>
-                    <option value="minuman">Minuman</option>
-                    <option value="snack">Snack</option>
+                    @foreach($categories as $category)
+                        <option value="{{ $category->name }}">{{ $category->name }}</option>
+                    @endforeach
                 </select>
             </div>
         </div>
@@ -47,143 +47,56 @@
                 data-category="all">
                 Semua Menu
             </button>
+            @foreach($categories as $category)
             <button
                 class="category-tab px-4 py-2 bg-gray-200 hover:bg-gray-300 text-[#1b1b18] rounded-lg whitespace-nowrap dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-[#EDEDEC]"
-                data-category="mie">
-                Mie
+                data-category="{{ $category->name }}">
+                {{ $category->name }}
             </button>
-            <button
-                class="category-tab px-4 py-2 bg-gray-200 hover:bg-gray-300 text-[#1b1b18] rounded-lg whitespace-nowrap dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-[#EDEDEC]"
-                data-category="minuman">
-                Minuman
-            </button>
-            <button
-                class="category-tab px-4 py-2 bg-gray-200 hover:bg-gray-300 text-[#1b1b18] rounded-lg whitespace-nowrap dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-[#EDEDEC]"
-                data-category="snack">
-                Snack
-            </button>
+            @endforeach
         </div>
     </div>
 
     <!-- Menu Items Display -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="menu-container">
-        <!-- Menu items will be populated dynamically -->
-        <!-- Mie Category -->
+        @forelse($menuItems as $menu)
         <div class="menu-item bg-white dark:bg-[#1E1E1C] rounded-lg shadow border border-gray-200 dark:border-gray-700 overflow-hidden"
-            data-category="mie">
+            data-category="{{ $menu->category->name ?? 'uncategorized' }}">
             <div class="h-48 overflow-hidden">
-                <img src="https://placehold.co/400x300" alt="Mie Goreng Spicy" class="w-full h-full object-cover">
+                @if($menu->image)
+                    <img src="{{ asset($menu->image) }}" alt="{{ $menu->name }}" class="w-full h-full object-cover">
+                @else
+                    <img src="https://placehold.co/400x300" alt="{{ $menu->name }}" class="w-full h-full object-cover">
+                @endif
             </div>
             <div class="p-4">
-                <h3 class="text-lg font-bold text-[#1b1b18] dark:text-[#EDEDEC]">Mie Goreng Spicy</h3>
-                <p class="text-sm text-[#706f6c] dark:text-[#A1A09A] mb-2">Delicious fried noodles with our signature spicy
-                    sauce</p>
+                <h3 class="text-lg font-bold text-[#1b1b18] dark:text-[#EDEDEC]">{{ $menu->name }}</h3>
+                <p class="text-sm text-[#706f6c] dark:text-[#A1A09A] mb-2">{{ $menu->description }}</p>
                 <div class="flex justify-between items-center mb-3">
-                    <span class="text-xl font-bold text-[#f53003] dark:text-[#FF4433]">Rp 35,000</span>
-                    <span class="text-xs px-2 py-1 bg-green-500 text-white rounded">Tersedia</span>
+                    <span class="text-xl font-bold text-[#f53003] dark:text-[#FF4433]">Rp {{ number_format($menu->price, 0, ',', '.') }}</span>
+                    @if($menu->status === 'active')
+                        <span class="text-xs px-2 py-1 bg-green-500 text-white rounded">Tersedia</span>
+                    @else
+                        <span class="text-xs px-2 py-1 bg-red-500 text-white rounded">Habis</span>
+                    @endif
                 </div>
-                <button
-                    class="add-to-cart w-full px-4 py-2 bg-[#f53003] hover:bg-[#d92902] text-white rounded-lg transition duration-300">
-                    Pesan
-                </button>
+                @if($menu->status === 'active')
+                    <button
+                        class="add-to-cart w-full px-4 py-2 bg-[#f53003] hover:bg-[#d92902] text-white rounded-lg transition duration-300">
+                        Pesan
+                    </button>
+                @else
+                    <button class="w-full px-4 py-2 bg-gray-400 text-white rounded-lg cursor-not-allowed" disabled>
+                        Habis
+                    </button>
+                @endif
             </div>
         </div>
-
-        <div class="menu-item bg-white dark:bg-[#1E1E1C] rounded-lg shadow border border-gray-200 dark:border-gray-700 overflow-hidden"
-            data-category="mie">
-            <div class="h-48 overflow-hidden">
-                <img src="https://placehold.co/400x300" alt="Mie Rebus Special" class="w-full h-full object-cover">
-            </div>
-            <div class="p-4">
-                <h3 class="text-lg font-bold text-[#1b1b18] dark:text-[#EDEDEC]">Mie Rebus Special</h3>
-                <p class="text-sm text-[#706f6c] dark:text-[#A1A09A] mb-2">Our special noodle soup with rich and flavorful
-                    broth</p>
-                <div class="flex justify-between items-center mb-3">
-                    <span class="text-xl font-bold text-[#f53003] dark:text-[#FF4433]">Rp 32,000</span>
-                    <span class="text-xs px-2 py-1 bg-red-500 text-white rounded">Habis</span>
-                </div>
-                <button class="w-full px-4 py-2 bg-gray-400 text-white rounded-lg cursor-not-allowed" disabled>
-                    Habis
-                </button>
-            </div>
+        @empty
+        <div class="col-span-full text-center py-12">
+            <p class="text-[#706f6c] dark:text-[#A1A09A] text-lg">Menu tidak ditemukan</p>
         </div>
-
-        <!-- Minuman Category -->
-        <div class="menu-item bg-white dark:bg-[#1E1E1C] rounded-lg shadow border border-gray-200 dark:border-gray-700 overflow-hidden"
-            data-category="minuman">
-            <div class="h-48 overflow-hidden">
-                <img src="https://placehold.co/400x300" alt="Es Teh Tarik" class="w-full h-full object-cover">
-            </div>
-            <div class="p-4">
-                <h3 class="text-lg font-bold text-[#1b1b18] dark:text-[#EDEDEC]">Es Teh Tarik</h3>
-                <p class="text-sm text-[#706f6c] dark:text-[#A1A09A] mb-2">Freshly brewed iced tea with authentic flavor</p>
-                <div class="flex justify-between items-center mb-3">
-                    <span class="text-xl font-bold text-[#f53003] dark:text-[#FF4433]">Rp 8,000</span>
-                    <span class="text-xs px-2 py-1 bg-green-500 text-white rounded">Tersedia</span>
-                </div>
-                <button
-                    class="add-to-cart w-full px-4 py-2 bg-[#f53003] hover:bg-[#d92902] text-white rounded-lg transition duration-300">
-                    Pesan
-                </button>
-            </div>
-        </div>
-
-        <div class="menu-item bg-white dark:bg-[#1E1E1C] rounded-lg shadow border border-gray-200 dark:border-gray-700 overflow-hidden"
-            data-category="minuman">
-            <div class="h-48 overflow-hidden">
-                <img src="https://placehold.co/400x300" alt="Jus Alpukat" class="w-full h-full object-cover">
-            </div>
-            <div class="p-4">
-                <h3 class="text-lg font-bold text-[#1b1b18] dark:text-[#EDEDEC]">Jus Alpukat</h3>
-                <p class="text-sm text-[#706f6c] dark:text-[#A1A09A] mb-2">Fresh avocado juice with milk and sugar</p>
-                <div class="flex justify-between items-center mb-3">
-                    <span class="text-xl font-bold text-[#f53003] dark:text-[#FF4433]">Rp 15,000</span>
-                    <span class="text-xs px-2 py-1 bg-green-500 text-white rounded">Tersedia</span>
-                </div>
-                <button
-                    class="add-to-cart w-full px-4 py-2 bg-[#f53003] hover:bg-[#d92902] text-white rounded-lg transition duration-300">
-                    Pesan
-                </button>
-            </div>
-        </div>
-
-        <!-- Snack Category -->
-        <div class="menu-item bg-white dark:bg-[#1E1E1C] rounded-lg shadow border border-gray-200 dark:border-gray-700 overflow-hidden"
-            data-category="snack">
-            <div class="h-48 overflow-hidden">
-                <img src="https://placehold.co/400x300" alt="Kerupuk" class="w-full h-full object-cover">
-            </div>
-            <div class="p-4">
-                <h3 class="text-lg font-bold text-[#1b1b18] dark:text-[#EDEDEC]">Kerupuk</h3>
-                <p class="text-sm text-[#706f6c] dark:text-[#A1A09A] mb-2">Crispy shrimp crackers with spicy sauce</p>
-                <div class="flex justify-between items-center mb-3">
-                    <span class="text-xl font-bold text-[#f53003] dark:text-[#FF4433]">Rp 5,000</span>
-                    <span class="text-xs px-2 py-1 bg-green-500 text-white rounded">Tersedia</span>
-                </div>
-                <button
-                    class="add-to-cart w-full px-4 py-2 bg-[#f53003] hover:bg-[#d92902] text-white rounded-lg transition duration-300">
-                    Pesan
-                </button>
-            </div>
-        </div>
-
-        <div class="menu-item bg-white dark:bg-[#1E1E1C] rounded-lg shadow border border-gray-200 dark:border-gray-700 overflow-hidden"
-            data-category="snack">
-            <div class="h-48 overflow-hidden">
-                <img src="https://placehold.co/400x300" alt="Pangsit" class="w-full h-full object-cover">
-            </div>
-            <div class="p-4">
-                <h3 class="text-lg font-bold text-[#1b1b18] dark:text-[#EDEDEC]">Pangsit</h3>
-                <p class="text-sm text-[#706f6c] dark:text-[#A1A09A] mb-2">Crispy fried dumplings with special sauce</p>
-                <div class="flex justify-between items-center mb-3">
-                    <span class="text-xl font-bold text-[#f53003] dark:text-[#FF4433]">Rp 12,000</span>
-                    <span class="text-xs px-2 py-1 bg-red-500 text-white rounded">Habis</span>
-                </div>
-                <button class="w-full px-4 py-2 bg-gray-400 text-white rounded-lg cursor-not-allowed" disabled>
-                    Habis
-                </button>
-            </div>
-        </div>
+        @endforelse
     </div>
 
     <!-- Empty State -->

@@ -18,7 +18,7 @@ use App\Http\Controllers\Admin\OrderController;
 Route::get('/', [App\Http\Controllers\Customer\CustomerController::class, 'showTableForm'])->name('customer.table');
 // Customer routes
 Route::post('/customer/select-table', [App\Http\Controllers\Customer\CustomerController::class, 'selectTable'])->name('customer.select-table');
-Route::get('/customer/menu', [App\Http\Controllers\Customer\CustomerController::class, 'menu'])->name('customer.menu');
+Route::get('/customer/menu', [App\Http\Controllers\Customer\MenuController::class, 'index'])->name('customer.menu');
 Route::get('/table/{tableNumber}/{sessionId?}', [App\Http\Controllers\Customer\CustomerController::class, 'qrLogin'])->name('customer.qr-login');
 Route::post('/customer/logout', [App\Http\Controllers\Customer\CustomerController::class, 'logout'])->name('customer.logout');
 

@@ -27,32 +27,16 @@ class CustomerController extends Controller
 
         // Store table number in session
         Session::put('customer_table_number', $request->table_number);
-        
+
         // Generate a simple customer identifier (you could use more sophisticated methods)
         $customerName = $request->customer_name ?? 'Customer';
         Session::put('customer_name', $customerName);
-        
+
         // Set a flag to indicate the customer is authenticated via table selection
         Session::put('customer_authenticated', true);
 
         // Redirect to menu page
         return redirect()->route('customer.menu');
-    }
-
-    /**
-     * Display the menu page with table information.
-     */
-    public function menu(Request $request)
-    {
-        // Check if customer is authenticated
-        if (!Session::get('customer_authenticated')) {
-            return redirect()->route('customer.table')->with('error', 'Silakan pilih nomor meja terlebih dahulu.');
-        }
-
-        $tableNumber = Session::get('customer_table_number');
-        $customerName = Session::get('customer_name', 'Customer');
-
-        return view('customer.menu', compact('tableNumber', 'customerName'));
     }
 
     /**
@@ -67,10 +51,10 @@ class CustomerController extends Controller
 
         // Store table number in session
         Session::put('customer_table_number', $tableNumber);
-        
+
         // Generate a name for QR-based login
         Session::put('customer_name', 'Customer');
-        
+
         // Set authentication flag
         Session::put('customer_authenticated', true);
 
