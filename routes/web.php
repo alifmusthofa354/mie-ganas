@@ -19,6 +19,8 @@ Route::get('/', [App\Http\Controllers\Customer\CustomerController::class, 'showT
 // Customer routes
 Route::post('/customer/select-table', [App\Http\Controllers\Customer\CustomerController::class, 'selectTable'])->name('customer.select-table');
 Route::get('/customer/menu', [App\Http\Controllers\Customer\MenuController::class, 'index'])->name('customer.menu');
+Route::get('/customer/checkout', [App\Http\Controllers\Customer\CheckoutController::class, 'showCheckout'])->name('customer.checkout');
+Route::post('/customer/process-order', [App\Http\Controllers\Customer\CheckoutController::class, 'processOrder'])->name('customer.process-order');
 Route::get('/table/{tableNumber}/{sessionId?}', [App\Http\Controllers\Customer\CustomerController::class, 'qrLogin'])->name('customer.qr-login');
 Route::post('/customer/logout', [App\Http\Controllers\Customer\CustomerController::class, 'logout'])->name('customer.logout');
 
