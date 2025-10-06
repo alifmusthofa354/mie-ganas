@@ -57,7 +57,7 @@
                         </li>
 
                         <li class="md:p-0 md:flex md:items-center **md:ml-4**">
-                            <a href="/customer/history"
+                            <a href="{{ route('customer.history') }}"
                                 class="w-full block px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-md transition duration-300 text-sm text-center md:w-auto">
                                 Riwayat
                             </a>

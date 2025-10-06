@@ -195,4 +195,31 @@ class CheckoutController extends Controller
 
         return view('customer.order-tracking', compact('order', 'tableNumber', 'customerName'));
     }
+
+    /**
+     * Show customer order history.
+     */
+    public function history()
+    {
+        // Check if customer is authenticated
+        if (!Session::get('customer_authenticated')) {
+            return redirect()->route('customer.table')->with('error', 'Silakan pilih nomor meja terlebih dahulu.');
+        }
+
+        // Ambil customer token dari cookie
+        $customerToken = request()->cookie(config('customer.token_cookie_name')) ?? null;
+
+        // Ambil semua pesanan berdasarkan customer token
+        $orders = collect();
+        if ($customerToken) {
+            $orders = Order::where('customer_token', $customerToken)
+                ->orderBy('created_at', 'desc')
+                ->get();
+        }
+
+        $tableNumber = Session::get('customer_table_number');
+        $customerName = Session::get('customer_name', 'Customer');
+
+        return view('customer.history', compact('orders', 'tableNumber', 'customerName'));
+    }
 }
