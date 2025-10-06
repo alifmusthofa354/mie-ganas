@@ -10,6 +10,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cookie; // Tambahkan impor Cookie
 
 class CheckoutController extends Controller
 {
@@ -52,6 +53,9 @@ class CheckoutController extends Controller
         }
 
         try {
+            // Ambil customer token dari cookie
+            $customerToken = $request->cookie(config('customer.token_cookie_name')) ?? null;
+
             // --- 2. Decode dan Validasi Struktur Cart Data ---
             $cartData = json_decode($request->cart_data, true);
 
@@ -109,6 +113,7 @@ class CheckoutController extends Controller
             $order = Order::create([
                 'table_number' => Session::get('customer_table_number'),
                 'customer_name' => $request->name,
+                'customer_token' => $customerToken, // Simpan customer token dari cookie
                 'notes' => $request->notes ?? '',
                 'subtotal' => $subtotal, // Menggunakan nilai yang dihitung server
                 'tax' => $tax,         // Menggunakan nilai yang dihitung server
@@ -173,6 +178,14 @@ class CheckoutController extends Controller
 
         if (!$order) {
             return redirect()->route('customer.menu')->with('error', 'Pesanan tidak ditemukan.');
+        }
+
+        // Ambil customer token dari cookie
+        $customerToken = request()->cookie(config('customer.token_cookie_name')) ?? null;
+
+        // Verifikasi apakah pesanan milik pelanggan ini berdasarkan token
+        if ($order->customer_token && $customerToken && $order->customer_token !== $customerToken) {
+            return redirect()->route('customer.menu')->with('error', 'Anda tidak memiliki akses ke pesanan ini.');
         }
 
         $tableNumber = Session::get('customer_table_number');

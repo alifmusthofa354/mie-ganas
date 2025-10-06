@@ -18,6 +18,7 @@ class Order extends Model
         'order_number',
         'table_number',
         'customer_name',
+        'customer_token',
         'notes',
         'subtotal',
         'tax',
