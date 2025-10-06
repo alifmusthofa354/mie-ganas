@@ -115,6 +115,26 @@
             };
         });
     </script>
+
+    <!-- SCRIPT PENTING UNTUK MENGHAPUS LOCAL STORAGE SAAT REDIRECT LOGOUT -->
+    @if (session('success-logout'))
+        <script>
+            // Logika: Jika ada pesan 'success' yang dibawa dari redirect, 
+            // kita asumsikan itu adalah redirect dari logout,
+            // dan kita hapus keranjang belanja.
+            // Metode ini aman karena pesan 'success' hanya muncul setelah action server.
+
+            try {
+                localStorage.removeItem('customer_cart');
+                console.log('Keranjang belanja (customer_cart) berhasil dihapus saat logout.');
+
+                // Opsional: Hapus pesan success dari session browser agar script ini tidak dijalankan lagi
+                // di refresh berikutnya (walaupun Laravel sudah menangani ini secara otomatis)
+            } catch (e) {
+                console.error('Gagal menghapus localStorage:', e);
+            }
+        </script>
+    @endif
 </body>
 
 </html>

@@ -103,6 +103,6 @@ class CustomerController extends Controller
         // Hapus cookie riwayat pelanggan
         Cookie::queue(Cookie::forget(config('customer.token_cookie_name')));
 
-        return redirect()->route('customer.table')->with('success', 'Berhasil keluar.');
+        return redirect()->route('customer.table')->with('success-logout', 'Berhasil keluar.');
     }
 }
