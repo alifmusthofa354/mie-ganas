@@ -139,4 +139,27 @@ class CheckoutController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Show the thank you page after order is placed.
+     */
+    public function thankYou($order_number)
+    {
+        // Check if customer is authenticated
+        if (!Session::get('customer_authenticated')) {
+            return redirect()->route('customer.table')->with('error', 'Silakan pilih nomor meja terlebih dahulu.');
+        }
+
+        // Find the order by order number
+        $order = Order::where('order_number', $order_number)->first();
+
+        if (!$order) {
+            return redirect()->route('customer.menu')->with('error', 'Pesanan tidak ditemukan.');
+        }
+
+        $tableNumber = Session::get('customer_table_number');
+        $customerName = Session::get('customer_name', 'Customer');
+
+        return view('customer.thank-you', compact('order', 'tableNumber', 'customerName'));
+    }
 }
