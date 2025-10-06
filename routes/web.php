@@ -22,6 +22,7 @@ Route::get('/customer/menu', [App\Http\Controllers\Customer\MenuController::clas
 Route::get('/customer/checkout', [App\Http\Controllers\Customer\CheckoutController::class, 'showCheckout'])->name('customer.checkout');
 Route::post('/customer/process-order', [App\Http\Controllers\Customer\CheckoutController::class, 'processOrder'])->name('customer.process-order');
 Route::get('/customer/thank-you/{order_number}', [App\Http\Controllers\Customer\CheckoutController::class, 'thankYou'])->name('customer.thank-you');
+Route::get('/customer/order-tracking/{order_number}', [App\Http\Controllers\Customer\CheckoutController::class, 'trackOrder'])->name('customer.order-tracking');
 Route::get('/table/{tableNumber}/{sessionId?}', [App\Http\Controllers\Customer\CustomerController::class, 'qrLogin'])->name('customer.qr-login');
 Route::post('/customer/logout', [App\Http\Controllers\Customer\CustomerController::class, 'logout'])->name('customer.logout');
 

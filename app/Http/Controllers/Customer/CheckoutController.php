@@ -162,4 +162,22 @@ class CheckoutController extends Controller
 
         return view('customer.thank-you', compact('order', 'tableNumber', 'customerName'));
     }
+
+    /**
+     * Track the order status.
+     */
+    public function trackOrder($order_number)
+    {
+        // Find the order by order number
+        $order = Order::where('order_number', $order_number)->first();
+
+        if (!$order) {
+            return redirect()->route('customer.menu')->with('error', 'Pesanan tidak ditemukan.');
+        }
+
+        $tableNumber = Session::get('customer_table_number');
+        $customerName = Session::get('customer_name', 'Customer');
+
+        return view('customer.order-tracking', compact('order', 'tableNumber', 'customerName'));
+    }
 }
