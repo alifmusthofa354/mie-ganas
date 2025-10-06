@@ -53,6 +53,8 @@ class CheckoutController extends Controller
         }
 
         try {
+            // UPDATE SESSION DENGAN NAMA PENGGUNA TERBARU DARI FORM CHECKOUT
+            Session::put('customer_name', $request->name);
             // Ambil customer token dari cookie
             $customerToken = $request->cookie(config('customer.token_cookie_name')) ?? null;
 

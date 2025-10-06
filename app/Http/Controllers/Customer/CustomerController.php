@@ -37,7 +37,7 @@ class CustomerController extends Controller
 
         // 2. Simpan Customer Session Data
         Session::put('customer_table_number', $request->table_number);
-        $customerName = $request->customer_name ?? 'Customer';
+        $customerName = $request->customer_name ?? '';
         Session::put('customer_name', $customerName);
         Session::put('customer_authenticated', true);
 
@@ -74,7 +74,7 @@ class CustomerController extends Controller
 
         // 2. Simpan Customer Session Data
         Session::put('customer_table_number', $tableNumber);
-        Session::put('customer_name', 'Customer');
+        Session::put('customer_name', '');
         Session::put('customer_authenticated', true);
 
         // 3. Set Cookie Customer Token (HttpOnly & Persistent)
