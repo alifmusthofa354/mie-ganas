@@ -6,7 +6,7 @@
     <!-- Hidden input fields to store customer session data -->
     <input type="hidden" id="customer_table_number" value="{{ session('customer_table_number', 'N/A') }}">
     <input type="hidden" id="customer_name" value="{{ session('customer_name', 'Customer') }}">
-    
+
     <!-- Table Information Banner -->
     <div class="mb-6 bg-[#f53003] text-white rounded-lg p-4 shadow">
         <div class="flex justify-between items-center">
@@ -325,29 +325,11 @@
                                             <div id="cartItems" class="max-h-96 overflow-y-auto">
                                                 <!-- Cart items will be populated here -->
                                             </div>
-                                            <div class="mt-4 pt-4 border-t border-gray-200 dark:border-[#3E3E3A]">
-                                                <div class="flex justify-between text-sm">
-                                                    <span class="text-[#1b1b18] dark:text-[#EDEDEC]">Subtotal:</span>
-                                                    <span id="cartSubtotal" class="text-[#1b1b18] dark:text-[#EDEDEC]">Rp 0</span>
-                                                </div>
-                                                <div class="flex justify-between text-sm">
-                                                    <span class="text-[#1b1b18] dark:text-[#EDEDEC]">Pajak (11%):</span>
-                                                    <span id="cartTax" class="text-[#1b1b18] dark:text-[#EDEDEC]">Rp 0</span>
-                                                </div>
-                                                <div class="flex justify-between text-lg font-bold mt-2 pt-2 border-t border-gray-200 dark:border-[#3E3E3A]">
+                                            <div class="mt-4">
+                                                <div class="flex justify-between text-lg font-bold border-gray-200 dark:border-[#3E3E3A]">
                                                     <span class="text-[#1b1b18] dark:text-[#EDEDEC]">Total:</span>
                                                     <span id="cartTotal" class="text-[#f53003] dark:text-[#FF4433]">Rp 0</span>
                                                 </div>
-                                            </div>
-                                            <div class="mt-4">
-                                                <label class="block text-sm font-medium text-[#1b1b18] dark:text-[#EDEDEC] mb-2">Nama</label>
-                                                <input type="text" id="customerNameInput" class="w-full px-4 py-2 text-sm text-[#1b1b18] border border-gray-300 rounded-lg bg-[#FDFDFC] focus:ring-[#f53003] focus:border-[#f53003] dark:bg-[#1E1E1C] dark:border-[#3E3E3A] dark:placeholder-[#A1A09A] dark:text-[#EDEDEC] dark:focus:ring-[#f53003] dark:focus:border-[#f53003]" 
-                                                       value="${document.getElementById('customer_name').value}">
-                                            </div>
-                                            <div class="mt-4">
-                                                <label class="block text-sm font-medium text-[#1b1b18] dark:text-[#EDEDEC] mb-2">Catatan (Opsional)</label>
-                                                <textarea id="orderNotes" class="w-full px-4 py-2 text-sm text-[#1b1b18] border border-gray-300 rounded-lg bg-[#FDFDFC] focus:ring-[#f53003] focus:border-[#f53003] dark:bg-[#1E1E1C] dark:border-[#3E3E3A] dark:placeholder-[#A1A09A] dark:text-[#EDEDEC] dark:focus:ring-[#f53003] dark:focus:border-[#f53003]" 
-                                                          placeholder="Contoh: tanpa bawang, pedas sedang, dll"></textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -380,21 +362,11 @@
 
                 // Handle checkout
                 document.getElementById('checkoutBtn').addEventListener('click', function() {
-                    const customerName = document.getElementById('customerNameInput').value || document.getElementById('customer_name').value;
-                    const orderNotes = document.getElementById('orderNotes').value;
-                    
-                    console.log('Cart Data:', cart);
-                    console.log('Table Number:', document.getElementById('customer_table_number').value);
-                    console.log('Customer Name:', customerName);
-                    console.log('Order Notes:', orderNotes);
-                    console.log('Subtotal:', document.getElementById('cartSubtotal').textContent);
-                    console.log('Tax (11%):', document.getElementById('cartTax').textContent);
-                    console.log('Total:', document.getElementById('cartTotal').textContent);
+                    // Store cart data in localStorage for checkout page
+                    localStorage.setItem('customer_cart', JSON.stringify(cart));
 
-                    // In the future, send data to backend or redirect to checkout page
-                    alert(
-                        'Data telah dicatat di console. Silakan buka developer tools untuk melihat detailnya.'
-                    );
+                    // Redirect to checkout page
+                    window.location.href = "{{ route('customer.checkout') }}";
                 });
             }
 
