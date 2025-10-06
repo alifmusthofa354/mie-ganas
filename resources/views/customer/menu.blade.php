@@ -448,6 +448,7 @@
                         if (cartItem && cartItem.quantity > 1) {
                             cartItem.quantity--;
                         } else if (cartItem && cartItem.quantity === 1) {
+                            cartItem.quantity--;
                             // Remove item if quantity becomes 0
                             const index = cart.findIndex(item => item.id == menuId);
                             if (index > -1) {
