@@ -13,8 +13,8 @@ class BroadcastServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // Panggil Broadcast::routes() untuk mengaktifkan route otorisasi
-
-        Broadcast::routes(['middleware' => ['web', 'auth']]);
+        // Gunakan middleware 'web' saja tanpa 'auth' agar bisa digunakan oleh pelanggan
+        Broadcast::routes(['middleware' => ['web']]);
 
         // Muat definisi channel dari routes/channels.php
         require base_path('routes/channels.php');

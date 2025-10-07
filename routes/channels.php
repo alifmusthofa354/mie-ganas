@@ -18,8 +18,12 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
 });
 
-// Dan pastikan channel 'admin.orders' Anda yang sebelumnya didefinisikan juga ada di sini:
+// Channel untuk admin orders - hanya untuk admin terotentikasi
 Broadcast::channel('admin.orders', function ($user) {
     // Cek apakah user terotentikasi dan memiliki role admin
     return $user && $user->role === 'admin';
 });
+
+// Kita tidak perlu channel authorization untuk customer karena menggunakan Channel publik
+// untuk update status order pelanggan. Customer token dan order number yang unik
+// menyediakan tingkat keamanan yang cukup.

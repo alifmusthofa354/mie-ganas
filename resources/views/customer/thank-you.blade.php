@@ -6,6 +6,9 @@
     <!-- Hidden input fields to store customer session data -->
     <input type="hidden" id="customer_table_number" value="{{ session('customer_table_number', 'N/A') }}">
     <input type="hidden" id="customer_name" value="{{ session('customer_name', 'Customer') }}">
+    <input type="hidden" id="customer_token" value="{{ $order->customer_token }}">
+    <input type="hidden" id="order_number" value="{{ $order->order_number }}">
+    <input type="hidden" id="current_status" value="{{ $order->status }}">
     
     <!-- Thank You Header -->
     <div class="mb-6 bg-[#f53003] text-white rounded-lg p-4 shadow">

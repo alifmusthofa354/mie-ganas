@@ -54,6 +54,9 @@ class OrderController extends Controller
         
         $order->save();
         
+        // Dispatch event untuk memberitahu pelanggan tentang update status
+        \App\Events\OrderStatusUpdated::dispatch($order);
+        
         return response()->json([
             'success' => true,
             'message' => 'Status order updated successfully',
