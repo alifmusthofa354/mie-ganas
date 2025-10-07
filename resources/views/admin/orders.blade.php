@@ -2,33 +2,61 @@
 
 @section('title', 'Orders Management')
 
+{{-- PASTIKAN: Anda memiliki meta tag CSRF token di layouts/admin.blade.php Anda: --}}
+{{-- <meta name="csrf-token" content="{{ csrf_token() }}"> --}}
+
 @section('content')
     <div class="max-w-full mx-auto">
         <div class="bg-white dark:bg-[#161615] shadow-md rounded-lg p-4 sm:p-6">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
                 <h1 class="text-2xl font-bold text-[#1b1b18] dark:text-[#EDEDEC]">Orders Management</h1>
                 <div class="flex space-x-3">
-                    <select class="px-3 py-2 text-sm border border-gray-300 rounded-lg bg-[#FDFDFC] focus:ring-[#f53003] focus:border-[#f53003] dark:bg-[#1E1E1C] dark:border-[#3E3E3A] dark:text-[#EDEDEC]">
-                        <option>All Status</option>
-                        <option>Pending</option>
-                        <option>Processing</option>
-                        <option>Completed</option>
-                        <option>Cancelled</option>
-                    </select>
-                    <button class="px-4 py-2 bg-[#f53003] hover:bg-[#d92902] text-white rounded-lg transition duration-300 text-sm">
-                        Refresh
-                    </button>
+                    <form method="GET" class="flex space-x-3">
+                        <select name="status" id="status-filter"
+                            class="px-3 py-2 text-sm border border-gray-300 rounded-lg bg-[#FDFDFC] focus:ring-[#f53003] focus:border-[#f53003] dark:bg-[#1E1E1C] dark:border-[#3E3E3A] dark:text-[#EDEDEC]">
+                            <option value="all" {{ request('status') == 'all' || !request('status') ? 'selected' : '' }}>
+                                All Status</option>
+                            <option value="pending_payment" {{ request('status') == 'pending_payment' ? 'selected' : '' }}>
+                                Pending Payment</option>
+                            <option value="processing" {{ request('status') == 'processing' ? 'selected' : '' }}>Processing
+                            </option>
+                            <option value="preparing" {{ request('status') == 'preparing' ? 'selected' : '' }}>Preparing
+                            </option>
+                            <option value="ready" {{ request('status') == 'ready' ? 'selected' : '' }}>Ready</option>
+                            <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Completed
+                            </option>
+                            <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Cancelled
+                            </option>
+                        </select>
+                        <button type="submit"
+                            class="px-4 py-2 bg-[#f53003] hover:bg-[#d92902] text-white rounded-lg transition duration-300 text-sm">
+                            Filter
+                        </button>
+                    </form>
+                    <a href="{{ route('admin.orders') }}"
+                        class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition duration-300 text-sm">
+                        Reset
+                    </a>
                 </div>
             </div>
 
             <div class="mb-6">
                 <div class="relative">
                     <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                        <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                        <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
                         </svg>
                     </div>
-                    <input type="text" id="order-search" class="block w-full p-4 pl-10 text-sm text-[#1b1b18] border border-gray-300 rounded-lg bg-[#FDFDFC] focus:ring-[#f53003] focus:border-[#f53003] dark:bg-[#1E1E1C] dark:border-[#3E3E3A] dark:placeholder-[#A1A09A] dark:text-[#EDEDEC] dark:focus:ring-[#f53003] dark:focus:border-[#f53003]" placeholder="Search orders...">
+                    <form method="GET">
+                        @if (request('status'))
+                            <input type="hidden" name="status" value="{{ request('status') }}">
+                        @endif
+                        <input type="text" name="search" id="order-search"
+                            class="block w-full p-4 pl-10 text-sm text-[#1b1b18] border border-gray-300 rounded-lg bg-[#FDFDFC] focus:ring-[#f53003] focus:border-[#f53003] dark:bg-[#1E1E1C] dark:border-[#3E3E3A] dark:placeholder-[#A1A09A] dark:text-[#EDEDEC] dark:focus:ring-[#f53003] dark:focus:border-[#f53003]"
+                            placeholder="Search orders..." value="{{ request('search') ?? '' }}">
+                    </form>
                 </div>
             </div>
 
@@ -36,152 +64,391 @@
                 <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                     <thead>
                         <tr>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-[#1b1b18] dark:text-[#EDEDEC] uppercase tracking-wider">Order ID</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-[#1b1b18] dark:text-[#EDEDEC] uppercase tracking-wider">Customer</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-[#1b1b18] dark:text-[#EDEDEC] uppercase tracking-wider">Items</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-[#1b1b18] dark:text-[#EDEDEC] uppercase tracking-wider">Total</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-[#1b1b18] dark:text-[#EDEDEC] uppercase tracking-wider">Status</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-[#1b1b18] dark:text-[#EDEDEC] uppercase tracking-wider">Date</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-[#1b1b18] dark:text-[#EDEDEC] uppercase tracking-wider">Actions</th>
+                            {{-- ID --}}
+                            <th
+                                class="px-3 py-3 text-left text-xs font-medium text-[#1b1b18] dark:text-[#EDEDEC] uppercase tracking-wider">
+                                ID</th>
+                            {{-- Customer --}}
+                            <th
+                                class="px-3 py-3 text-left text-xs font-medium text-[#1b1b18] dark:text-[#EDEDEC] uppercase tracking-wider">
+                                Customer</th>
+                            {{-- Items --}}
+                            <th
+                                class="px-3 py-3 text-left text-xs font-medium text-[#1b1b18] dark:text-[#EDEDEC] uppercase tracking-wider">
+                                Items</th>
+                            {{-- Table --}}
+                            <th
+                                class="px-3 py-3 text-left text-xs font-medium text-[#1b1b18] dark:text-[#EDEDEC] uppercase tracking-wider">
+                                Table</th>
+                            {{-- Total --}}
+                            <th
+                                class="px-3 py-3 text-left text-xs font-medium text-[#1b1b18] dark:text-[#EDEDEC] uppercase tracking-wider">
+                                Total</th>
+                            {{-- Status (min-w-32) --}}
+                            <th
+                                class="px-3 py-3 text-left text-xs font-medium text-[#1b1b18] dark:text-[#EDEDEC] uppercase tracking-wider min-w-32">
+                                Status</th>
+                            {{-- Date (Text-right) --}}
+                            <th
+                                class="px-3 py-3 text-right text-xs font-medium text-[#1b1b18] dark:text-[#EDEDEC] uppercase tracking-wider">
+                                Date</th>
+                            {{-- ACT. (Text-center) --}}
+                            <th
+                                class="px-3 py-3 text-center text-xs font-medium text-[#1b1b18] dark:text-[#EDEDEC] uppercase tracking-wider">
+                                ACT.</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                        <tr>
-                            <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-[#1b1b18] dark:text-[#EDEDEC]">#ORD-001</td>
-                            <td class="px-4 py-3 whitespace-nowrap">
-                                <div class="text-sm text-[#1b1b18] dark:text-[#EDEDEC]">John Doe</div>
-                                <div class="text-sm text-[#706f6c] dark:text-[#A1A09A]">john@example.com</div>
-                            </td>
-                            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#706f6c] dark:text-[#A1A09A]">
-                                <ul class="list-disc list-inside">
-                                    <li>Nasi Goreng (1x)</li>
-                                    <li>Es Teh (2x)</li>
-                                </ul>
-                            </td>
-                            <td class="px-4 py-3 whitespace-nowrap text-sm font-semibold text-[#1b1b18] dark:text-[#EDEDEC]">Rp 35,000</td>
-                            <td class="px-4 py-3 whitespace-nowrap">
-                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Completed</span>
-                            </td>
-                            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#706f6c] dark:text-[#A1A09A]">Today, 10:30 AM</td>
-                            <td class="px-4 py-3 whitespace-nowrap text-sm font-medium">
-                                <a href="#" class="text-[#f53003] hover:text-[#d92902] mr-2">View</a>
-                                <a href="#" class="text-blue-600 hover:text-blue-900">Edit</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-[#1b1b18] dark:text-[#EDEDEC]">#ORD-002</td>
-                            <td class="px-4 py-3 whitespace-nowrap">
-                                <div class="text-sm text-[#1b1b18] dark:text-[#EDEDEC]">Jane Smith</div>
-                                <div class="text-sm text-[#706f6c] dark:text-[#A1A09A]">jane@example.com</div>
-                            </td>
-                            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#706f6c] dark:text-[#A1A09A]">
-                                <ul class="list-disc list-inside">
-                                    <li>Mie Ayam (1x)</li>
-                                    <li>Jeruk (1x)</li>
-                                </ul>
-                            </td>
-                            <td class="px-4 py-3 whitespace-nowrap text-sm font-semibold text-[#1b1b18] dark:text-[#EDEDEC]">Rp 27,000</td>
-                            <td class="px-4 py-3 whitespace-nowrap">
-                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Processing</span>
-                            </td>
-                            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#706f6c] dark:text-[#A1A09A]">Today, 11:15 AM</td>
-                            <td class="px-4 py-3 whitespace-nowrap text-sm font-medium">
-                                <a href="#" class="text-[#f53003] hover:text-[#d92902] mr-2">View</a>
-                                <a href="#" class="text-blue-600 hover:text-blue-900">Edit</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-[#1b1b18] dark:text-[#EDEDEC]">#ORD-003</td>
-                            <td class="px-4 py-3 whitespace-nowrap">
-                                <div class="text-sm text-[#1b1b18] dark:text-[#EDEDEC]">Bob Johnson</div>
-                                <div class="text-sm text-[#706f6c] dark:text-[#A1A09A]">bob@example.com</div>
-                            </td>
-                            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#706f6c] dark:text-[#A1A09A]">
-                                <ul class="list-disc list-inside">
-                                    <li>Bakso (1x)</li>
-                                    <li>Teh Panas (1x)</li>
-                                </ul>
-                            </td>
-                            <td class="px-4 py-3 whitespace-nowrap text-sm font-semibold text-[#1b1b18] dark:text-[#EDEDEC]">Rp 23,000</td>
-                            <td class="px-4 py-3 whitespace-nowrap">
-                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Cancelled</span>
-                            </td>
-                            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#706f6c] dark:text-[#A1A09A]">Yesterday, 4:20 PM</td>
-                            <td class="px-4 py-3 whitespace-nowrap text-sm font-medium">
-                                <a href="#" class="text-[#f53003] hover:text-[#d92902] mr-2">View</a>
-                                <a href="#" class="text-blue-600 hover:text-blue-900">Edit</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-[#1b1b18] dark:text-[#EDEDEC]">#ORD-004</td>
-                            <td class="px-4 py-3 whitespace-nowrap">
-                                <div class="text-sm text-[#1b1b18] dark:text-[#EDEDEC]">Alice Brown</div>
-                                <div class="text-sm text-[#706f6c] dark:text-[#A1A09A]">alice@example.com</div>
-                            </td>
-                            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#706f6c] dark:text-[#A1A09A]">
-                                <ul class="list-disc list-inside">
-                                    <li>Sate Ayam (2x)</li>
-                                    <li>Es Teh (1x)</li>
-                                </ul>
-                            </td>
-                            <td class="px-4 py-3 whitespace-nowrap text-sm font-semibold text-[#1b1b18] dark:text-[#EDEDEC]">Rp 45,000</td>
-                            <td class="px-4 py-3 whitespace-nowrap">
-                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Processing</span>
-                            </td>
-                            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#706f6c] dark:text-[#A1A09A]">Today, 9:45 AM</td>
-                            <td class="px-4 py-3 whitespace-nowrap text-sm font-medium">
-                                <a href="#" class="text-[#f53003] hover:text-[#d92902] mr-2">View</a>
-                                <a href="#" class="text-blue-600 hover:text-blue-900">Edit</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-[#1b1b18] dark:text-[#EDEDEC]">#ORD-005</td>
-                            <td class="px-4 py-3 whitespace-nowrap">
-                                <div class="text-sm text-[#1b1b18] dark:text-[#EDEDEC]">Charlie Wilson</div>
-                                <div class="text-sm text-[#706f6c] dark:text-[#A1A09A]">charlie@example.com</div>
-                            </td>
-                            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#706f6c] dark:text-[#A1A09A]">
-                                <ul class="list-disc list-inside">
-                                    <li>Jus Alpukat (1x)</li>
-                                    <li>Mie Ayam (1x)</li>
-                                </ul>
-                            </td>
-                            <td class="px-4 py-3 whitespace-nowrap text-sm font-semibold text-[#1b1b18] dark:text-[#EDEDEC]">Rp 37,000</td>
-                            <td class="px-4 py-3 whitespace-nowrap">
-                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">Ready</span>
-                            </td>
-                            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#706f6c] dark:text-[#A1A09A]">Today, 8:30 AM</td>
-                            <td class="px-4 py-3 whitespace-nowrap text-sm font-medium">
-                                <a href="#" class="text-[#f53003] hover:text-[#d92902] mr-2">View</a>
-                                <a href="#" class="text-blue-600 hover:text-blue-900">Edit</a>
-                            </td>
-                        </tr>
+                        @forelse($orders as $order)
+                            <tr>
+                                <td
+                                    class="px-3 py-3 whitespace-nowrap text-sm font-medium text-[#1b1b18] dark:text-[#EDEDEC]">
+                                    {{ $order->order_number }}</td>
+
+                                {{-- CUSTOMER: Max width dan truncate --}}
+                                <td class="px-3 py-3 max-w-20 truncate">
+                                    <div class="text-sm text-[#1b1b18] dark:text-[#EDEDEC] whitespace-nowrap">
+                                        {{ $order->customer_name }}
+                                    </div>
+                                </td>
+
+                                {{-- ITEMS: Kepadatan Maksimal (text-xs, leading-none, tanpa bullet) --}}
+                                <td class="px-3 py-3 text-xs text-[#706f6c] dark:text-[#A1A09A]">
+                                    <div class="space-y-0 leading-none">
+                                        @forelse($order->orderItems as $item)
+                                            <div class="leading-none">
+                                                {{ $item->name }} ({{ $item->quantity }}x)
+                                            </div>
+                                        @empty
+                                            <div class="leading-none">No items</div>
+                                        @endforelse
+                                    </div>
+                                </td>
+
+                                <td class="px-3 py-3 whitespace-nowrap text-sm text-[#706f6c] dark:text-[#A1A09A]">
+                                    {{ $order->table_number }}</td>
+                                <td
+                                    class="px-3 py-3 whitespace-nowrap text-sm font-semibold text-[#1b1b18] dark:text-[#EDEDEC]">
+                                    Rp {{ number_format($order->total, 0, ',', '.') }}</td>
+
+                                {{-- STATUS: min-w-32 --}}
+                                <td class="px-3 py-3 whitespace-nowrap min-w-32">
+                                    <select
+                                        class="status-update px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800 w-full border border-gray-300 dark:bg-[#1E1E1C] dark:text-[#EDEDEC] dark:border-[#3E3E3A]"
+                                        data-order-number="{{ $order->order_number }}">
+                                        <option value="pending_payment"
+                                            {{ $order->status === 'pending_payment' ? 'selected' : '' }}>Pending Payment
+                                        </option>
+                                        <option value="processing" {{ $order->status === 'processing' ? 'selected' : '' }}>
+                                            Processing</option>
+                                        <option value="preparing" {{ $order->status === 'preparing' ? 'selected' : '' }}>
+                                            Preparing</option>
+                                        <option value="ready" {{ $order->status === 'ready' ? 'selected' : '' }}>Ready
+                                        </option>
+                                        <option value="completed" {{ $order->status === 'completed' ? 'selected' : '' }}>
+                                            Completed</option>
+                                        <option value="cancelled" {{ $order->status === 'cancelled' ? 'selected' : '' }}>
+                                            Cancelled</option>
+                                    </select>
+                                </td>
+
+                                {{-- DATE: Format 2 baris (H:i dan DD/MM/YYYY) dan rata kanan --}}
+                                <td
+                                    class="px-3 py-3 whitespace-nowrap text-sm text-right text-[#706f6c] dark:text-[#A1A09A]">
+                                    <div class="font-semibold text-right text-[#1b1b18] dark:text-[#EDEDEC] text-sm">
+                                        {{ $order->created_at->format('H:i') }}</div>
+                                    <div class="text-xs text-right">{{ $order->created_at->format('d/m/Y') }}</div>
+                                </td>
+
+                                {{-- ACTION: Text-center --}}
+                                <td class="px-3 py-3 whitespace-nowrap text-center text-sm font-medium">
+                                    <a href="#" class="text-[#f53003] hover:text-[#d92902] view-order"
+                                        data-order-id="{{ $order->order_number }}">View</a>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="8" class="px-3 py-6 text-center text-sm text-[#706f6c] dark:text-[#A1A09A]">
+                                    No orders found.
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
 
+            {{-- Pagination Links --}}
             <div class="flex items-center justify-between mt-6">
                 <div class="text-sm text-[#706f6c] dark:text-[#A1A09A]">
-                    Showing <span class="font-medium">1</span> to <span class="font-medium">5</span> of <span class="font-medium">24</span> results
+                    Showing {{ $orders->firstItem() ?? 0 }} to {{ $orders->lastItem() ?? 0 }} of {{ $orders->total() }}
+                    results
                 </div>
                 <div class="flex space-x-2">
-                    <button class="px-3 py-1 rounded-md bg-white dark:bg-[#1E1E1C] border border-gray-300 dark:border-[#3E3E3A] text-sm text-[#1b1b18] dark:text-[#EDEDEC] hover:bg-gray-50 dark:hover:bg-gray-700">
-                        Previous
-                    </button>
-                    <button class="px-3 py-1 rounded-md bg-[#f53003] text-white text-sm hover:bg-[#d92902]">
-                        1
-                    </button>
-                    <button class="px-3 py-1 rounded-md bg-white dark:bg-[#1E1E1C] border border-gray-300 dark:border-[#3E3E3A] text-sm text-[#1b1b18] dark:text-[#EDEDEC] hover:bg-gray-50 dark:hover:bg-gray-700">
-                        2
-                    </button>
-                    <button class="px-3 py-1 rounded-md bg-white dark:bg-[#1E1E1C] border border-gray-300 dark:border-[#3E3E3A] text-sm text-[#1b1b18] dark:text-[#EDEDEC] hover:bg-gray-50 dark:hover:bg-gray-700">
-                        3
-                    </button>
-                    <button class="px-3 py-1 rounded-md bg-white dark:bg-[#1E1E1C] border border-gray-300 dark:border-[#3E3E3A] text-sm text-[#1b1b18] dark:text-[#EDEDEC] hover:bg-gray-50 dark:hover:bg-gray-700">
-                        Next
+                    @if ($orders->onFirstPage())
+                        <span
+                            class="px-3 py-1 rounded-md bg-gray-200 dark:bg-[#3E3E3A] text-sm text-[#706f6c] dark:text-[#A1A09A] cursor-not-allowed">Previous</span>
+                    @else
+                        <a href="{{ $orders->previousPageUrl() }}"
+                            class="px-3 py-1 rounded-md bg-white dark:bg-[#1E1E1C] border border-gray-300 dark:border-[#3E3E3A] text-sm text-[#1b1b18] dark:text-[#EDEDEC] hover:bg-gray-50 dark:hover:bg-gray-700">Previous</a>
+                    @endif
+
+                    @foreach (range(1, $orders->lastPage()) as $page)
+                        @if ($page == $orders->currentPage())
+                            <span class="px-3 py-1 rounded-md bg-[#f53003] text-white text-sm">{{ $page }}</span>
+                        @elseif(
+                            $page == 1 ||
+                                $page == $orders->lastPage() ||
+                                ($page >= $orders->currentPage() - 1 && $page <= $orders->currentPage() + 1))
+                            <a href="{{ $orders->url($page) }}"
+                                class="px-3 py-1 rounded-md bg-white dark:bg-[#1E1E1C] border border-gray-300 dark:border-[#3E3E3A] text-sm text-[#1b1b18] dark:text-[#EDEDEC] hover:bg-gray-50 dark:hover:bg-gray-700">{{ $page }}</a>
+                        @elseif($page == 2 && $orders->currentPage() > 3)
+                            <span
+                                class="px-3 py-1 rounded-md bg-white dark:bg-[#1E1E1C] border border-gray-300 dark:border-[#3E3E3A] text-sm text-[#1b1b18] dark:text-[#EDEDEC]">...</span>
+                        @elseif($page == $orders->lastPage() - 1 && $orders->currentPage() < $orders->lastPage() - 2)
+                            <span
+                                class="px-3 py-1 rounded-md bg-white dark:bg-[#1E1E1C] border border-gray-300 dark:border-[#3E3E3A] text-sm text-[#1b1b18] dark:text-[#EDEDEC]">...</span>
+                        @endif
+                    @endforeach
+
+                    @if ($orders->hasMorePages())
+                        <a href="{{ $orders->nextPageUrl() }}"
+                            class="px-3 py-1 rounded-md bg-white dark:bg-[#1E1E1C] border border-gray-300 dark:border-[#3E3E3A] text-sm text-[#1b1b18] dark:text-[#EDEDEC] hover:bg-gray-50 dark:hover:bg-gray-700">Next</a>
+                    @else
+                        <span
+                            class="px-3 py-1 rounded-md bg-gray-200 dark:bg-[#3E3E3A] text-sm text-[#706f6c] dark:text-[#A1A09A] cursor-not-allowed">Next</span>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="order-modal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                <div class="absolute inset-0 bg-gray-500 opacity-75" id="modal-backdrop"></div>
+            </div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <div
+                class="inline-block align-bottom bg-white dark:bg-[#161615] rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="bg-white dark:bg-[#161615] px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                            <h3 class="text-lg leading-6 font-medium text-[#1b1b18] dark:text-[#EDEDEC]" id="modal-title">
+                                Order Details
+                            </h3>
+                            <div class="mt-4" id="modal-content">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 dark:bg-[#1E1E1C] px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button type="button"
+                        class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-[#f53003] text-base font-medium text-white hover:bg-[#d92902] sm:ml-3 sm:w-auto sm:text-sm"
+                        id="modal-close">
+                        Close
                     </button>
                 </div>
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Caching selector for CSRF token
+            const csrfToken = document.querySelector('meta[name="csrf-token"]') ?
+                document.querySelector('meta[name="csrf-token"]').getAttribute('content') :
+                '';
+
+            // --- Status update functionality ---
+            const statusSelects = document.querySelectorAll('.status-update');
+            statusSelects.forEach(select => {
+                // Terapkan class Dark Mode default pada semua select saat DOMContentLoaded
+                select.classList.add('dark:bg-[#1E1E1C]', 'dark:text-[#EDEDEC]', 'dark:border-[#3E3E3A]');
+
+                select.addEventListener('change', function() {
+                    const orderNumber = this.getAttribute('data-order-number');
+                    const newStatus = this.value;
+
+                    // Show loading state
+                    const originalHtml = this.innerHTML;
+                    this.innerHTML = '<option value="">Updating...</option>';
+                    this.disabled = true;
+
+                    // Send AJAX request to update status
+                    fetch(`{{ route('admin.orders.update-status', ['order_number' => 0]) }}`
+                            .replace(
+                                '0', orderNumber), {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': csrfToken,
+                                },
+                                body: JSON.stringify({
+                                    status: newStatus
+                                })
+                            })
+                        .then(response => response.json())
+                        .then(data => {
+                            this.disabled = false;
+
+                            if (data.success) {
+                                // Update status badge with appropriate color
+                                let bgColor = 'bg-gray-100 text-gray-800';
+                                switch (newStatus) {
+                                    case 'pending_payment':
+                                    case 'processing':
+                                    case 'preparing':
+                                        bgColor = 'bg-yellow-100 text-yellow-800';
+                                        break;
+                                    case 'ready':
+                                        bgColor = 'bg-blue-100 text-blue-800';
+                                        break;
+                                    case 'completed':
+                                        bgColor = 'bg-green-100 text-green-800';
+                                        break;
+                                    case 'cancelled':
+                                        bgColor = 'bg-red-100 text-red-800';
+                                        break;
+                                }
+
+                                // Update the select to show the new status with the right color
+                                this.className =
+                                    `status-update px-2 py-1 text-xs font-semibold rounded-full ${bgColor} w-full border border-gray-300 dark:bg-[#1E1E1C] dark:text-[#EDEDEC] dark:border-[#3E3E3A]`;
+                                this.innerHTML = `
+                                    <option value="pending_payment" ${newStatus === 'pending_payment' ? 'selected' : ''}>Pending Payment</option>
+                                    <option value="processing" ${newStatus === 'processing' ? 'selected' : ''}>Processing</option>
+                                    <option value="preparing" ${newStatus === 'preparing' ? 'selected' : ''}>Preparing</option>
+                                    <option value="ready" ${newStatus === 'ready' ? 'selected' : ''}>Ready</option>
+                                    <option value="completed" ${newStatus === 'completed' ? 'selected' : ''}>Completed</option>
+                                    <option value="cancelled" ${newStatus === 'cancelled' ? 'selected' : ''}>Cancelled</option>
+                                `;
+                                alert('Status updated successfully!');
+                            } else {
+                                // Restore original value and show error
+                                this.innerHTML = originalHtml;
+                                alert('Failed to update status: ' + (data.message ||
+                                    'Unknown error'));
+                            }
+                        })
+                        .catch(error => {
+                            // Restore original value and show error
+                            this.innerHTML = originalHtml;
+                            this.disabled = false;
+                            console.error('Error:', error);
+                            alert('An error occurred while updating the status.');
+                        });
+                });
+            });
+
+            // --- View order modal functionality ---
+            const viewButtons = document.querySelectorAll('.view-order');
+            const modal = document.getElementById('order-modal');
+            const modalBackdrop = document.getElementById('modal-backdrop');
+            const modalClose = document.getElementById('modal-close');
+            const modalContent = document.getElementById('modal-content');
+
+            viewButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const orderNumber = this.getAttribute('data-order-id');
+
+                    // Tampilkan loading state
+                    modalContent.innerHTML =
+                        '<p class="text-center text-[#706f6c] dark:text-[#A1A09A]">Loading details...</p>';
+                    modal.classList.remove('hidden');
+
+                    // Fetch order details via AJAX
+                    fetch(`{{ route('admin.api.orders.show', ['order_number' => 0]) }}`.replace(
+                            '0', orderNumber))
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                const order = data.order;
+
+                                let itemsHtml = '';
+                                if (order.order_items && order.order_items.length > 0) {
+                                    order.order_items.forEach(item => {
+                                        // Hitung dan format total per item
+                                        const itemTotal = (item.quantity * item.price)
+                                            .toLocaleString('id-ID');
+                                        itemsHtml +=
+                                            `<li class="py-1 text-[#1b1b18] dark:text-[#EDEDEC]">${item.quantity}x ${item.name} - Rp ${itemTotal}</li>`;
+                                    });
+                                } else {
+                                    itemsHtml =
+                                        '<li class="py-1 text-[#1b1b18] dark:text-[#EDEDEC]">No items</li>';
+                                }
+
+                                // Format tanggal di modal: 7/10/2025, 04.40.12
+                                const dateObj = new Date(order.created_at);
+                                const formattedDate = dateObj.toLocaleDateString('id-ID', {
+                                    day: 'numeric',
+                                    month: 'numeric',
+                                    year: 'numeric'
+                                });
+                                const formattedTime = dateObj.toLocaleTimeString('id-ID', {
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    second: '2-digit',
+                                    hour12: false
+                                }).replace(/:/g, '.');
+
+                                const finalDateTime = `${formattedDate}, ${formattedTime}`;
+
+
+                                modalContent.innerHTML = `
+                                    <div class="mb-4 text-[#1b1b18] dark:text-[#EDEDEC]">
+                                        <h4 class="font-bold">Order #${order.order_number}</h4>
+                                        <p class="text-sm text-[#706f6c] dark:text-[#A1A09A]">Customer: ${order.customer_name}</p>
+                                        <p class="text-sm text-[#706f6c] dark:text-[#A1A09A]">Table: ${order.table_number}</p>
+                                        <p class="text-sm text-[#706f6c] dark:text-[#A1A09A]">Status: ${order.status.replace('_', ' ')}</p>
+                                        <p class="text-sm text-[#706f6c] dark:text-[#A1A09A]">Payment Method: ${order.payment_method === 'qris' ? 'QRIS' : 'Cash'}</p>
+                                        <p class="text-sm text-[#706f6c] dark:text-[#A1A09A]">Date: ${finalDateTime}</p>
+                                        ${order.notes ? `<p class="text-sm text-[#706f6c] dark:text-[#A1A09A] mt-2">Notes: ${order.notes}</p>` : ''}
+                                    </div>
+                                    <div class="mb-4">
+                                        <h5 class="font-bold text-[#1b1b18] dark:text-[#EDEDEC]">Items:</h5>
+                                        <ul class="list-disc list-inside">
+                                            ${itemsHtml}
+                                        </ul>
+                                    </div>
+                                    <div class="border-t border-gray-200 dark:border-[#3E3E3A] pt-3 text-[#1b1b18] dark:text-[#EDEDEC]">
+                                        <div class="flex justify-between py-1">
+                                            <span>Subtotal:</span>
+                                            <span class="font-semibold">Rp ${order.subtotal.toLocaleString('id-ID')}</span>
+                                        </div>
+                                        <div class="flex justify-between py-1">
+                                            <span>Tax:</span>
+                                            <span class="font-semibold">Rp ${order.tax.toLocaleString('id-ID')}</span>
+                                        </div>
+                                        <div class="flex justify-between py-1 font-bold text-lg border-t border-gray-200 dark:border-[#3E3E3A] pt-2">
+                                            <span>Total:</span>
+                                            <span class="text-[#f53003]">Rp ${order.total.toLocaleString('id-ID')}</span>
+                                        </div>
+                                    </div>
+                                `;
+
+                            } else {
+                                modalContent.innerHTML =
+                                    `<p class="text-center text-red-600 dark:text-red-400">Failed to load order details: ${data.message || 'Unknown Error'}</p>`;
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            modalContent.innerHTML =
+                                '<p class="text-center text-red-600 dark:text-red-400">An error occurred while loading order details.</p>';
+                        });
+                });
+            });
+
+            // Modal close functionality
+            modalClose.addEventListener('click', function() {
+                modal.classList.add('hidden');
+            });
+
+            modalBackdrop.addEventListener('click', function() {
+                modal.classList.add('hidden');
+            });
+        });
+    </script>
 @endsection

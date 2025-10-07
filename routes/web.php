@@ -91,4 +91,6 @@ Route::middleware('can:has-role,"admin","Only Admins can access this page."')
 
         // Route: /admin/orders (Nama: admin.orders)
         Route::get('/orders', [OrderController::class, 'index'])->name('orders');
+        Route::post('/orders/{order_number}/update-status', [OrderController::class, 'updateStatus'])->name('orders.update-status');
+        Route::get('/api/orders/{order_number}', [OrderController::class, 'getOrderDetails'])->name('api.orders.show');
     });
