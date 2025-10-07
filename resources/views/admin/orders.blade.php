@@ -2,9 +2,6 @@
 
 @section('title', 'Orders Management')
 
-{{-- PASTIKAN: Anda memiliki meta tag CSRF token di layouts/admin.blade.php Anda: --}}
-{{-- <meta name="csrf-token" content="{{ csrf_token() }}"> --}}
-
 @section('content')
     <div class="max-w-full mx-auto">
         <div class="bg-white dark:bg-[#161615] shadow-md rounded-lg p-4 sm:p-6">

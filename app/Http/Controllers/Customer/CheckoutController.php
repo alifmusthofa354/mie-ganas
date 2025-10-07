@@ -10,6 +10,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use App\Events\OrderCreated;
 use Illuminate\Support\Facades\Cookie; // Tambahkan impor Cookie
 
 class CheckoutController extends Controller
@@ -129,6 +130,9 @@ class CheckoutController extends Controller
             foreach ($orderItemsData as $item) {
                 OrderItem::create(array_merge($item, ['order_id' => $order->id]));
             }
+            // Memicu Event Real-time
+            Log::info('Dispacth Order: ' . $order->id); // Log pesan'. $order->id .''.
+            OrderCreated::dispatch($order);
 
             // --- 6. Response Sukses ---
             return response()->json([

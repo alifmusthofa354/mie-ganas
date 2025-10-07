@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="@yield('meta-description', 'Aplikasi Dashboard untuk Mie Ganas')">
 
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <title>@yield('title', 'Dashboard - Mie Ganas')</title>
 
     <link rel="preconnect" href="https://fonts.bunny.net">

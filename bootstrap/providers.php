@@ -5,4 +5,5 @@ return [
     App\Providers\AuthServiceProvider::class,
     App\Providers\CaptchaServiceProvider::class,
     App\Providers\EventServiceProvider::class,
+    App\Providers\BroadcastServiceProvider::class,
 ];
