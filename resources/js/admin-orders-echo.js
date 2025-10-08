@@ -25,7 +25,7 @@ function createOrderRowHtml(order) {
 
     return `
     <tr>
-        <td class="px-3 py-3 whitespace-nowrap text-sm font-medium text-[#1b1b18] dark:text-[#EDEDEC}">
+        <td class="px-3 py-3 whitespace-nowrap text-sm font-medium text-[#1b1918cf] dark:text-[#EDEDEC]">
             ${order.order_number}
         </td>
         <td class="px-3 py-3 max-w-20 truncate"> 
