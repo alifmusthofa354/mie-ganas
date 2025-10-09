@@ -1,3 +1,23 @@
+// FUNGSI UTILITY: untuk mendapatkan kelas CSS berdasarkan status
+function getStatusClass(status) {
+    switch(status) {
+        case 'pending_payment':
+            return 'bg-yellow-100 text-yellow-800';
+        case 'processing':
+            return 'bg-blue-200 text-blue-900';
+        case 'preparing':
+            return 'bg-purple-200 text-purple-900';
+        case 'ready':
+            return 'bg-orange-100 text-orange-800';
+        case 'completed':
+            return 'bg-green-200 text-green-900';
+        case 'cancelled':
+            return 'bg-red-200 text-red-900';
+        default:
+            return 'bg-gray-100 text-gray-800';
+    }
+}
+
 // FUNGSI UTILITY: untuk mengkonversi objek order dari event menjadi baris HTML tabel
 function createOrderRowHtml(order) {
 
@@ -42,7 +62,7 @@ function createOrderRowHtml(order) {
         </td>
         <td class="px-3 py-3 whitespace-nowrap min-w-32">
             <select
-                class="status-update px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800 w-full border border-gray-300 dark:bg-[#1E1E1C] dark:text-[#EDEDEC] dark:border-[#3E3E3A]"
+                class="status-update px-2 py-1 text-xs font-semibold rounded-full ${getStatusClass(order.status)} w-full border border-gray-300 dark:bg-[#1E1E1C] dark:text-[#EDEDEC] dark:border-[#3E3E3A]"
                 data-order-number="${order.order_number}">
                 <option value="pending_payment"${order.status === 'pending_payment' ? ' selected' : ''}>Pending Payment</option>
                 <option value="processing"${order.status === 'processing' ? ' selected' : ''}>Processing</option>
@@ -245,10 +265,11 @@ function updateStatusSelectStyle(selectElement, status) {
     // Hapus kelas-kelas warna sebelumnya
     selectElement.classList.remove(
         'bg-yellow-100', 'text-yellow-800', 
-        'bg-green-100', 'text-green-800',
-        'bg-blue-100', 'text-blue-800',
-        'bg-purple-100', 'text-purple-800',
-        'bg-red-100', 'text-red-800',
+        'bg-green-200', 'text-green-900',
+        'bg-blue-200', 'text-blue-900',
+        'bg-purple-200', 'text-purple-900',
+        'bg-orange-100', 'text-orange-800',
+        'bg-red-200', 'text-red-900',
         'bg-gray-100', 'text-gray-800'
     );
     
@@ -258,19 +279,19 @@ function updateStatusSelectStyle(selectElement, status) {
             selectElement.classList.add('bg-yellow-100', 'text-yellow-800');
             break;
         case 'processing':
-            selectElement.classList.add('bg-blue-100', 'text-blue-800');
+            selectElement.classList.add('bg-blue-200', 'text-blue-900');
             break;
         case 'preparing':
-            selectElement.classList.add('bg-purple-100', 'text-purple-800');
+            selectElement.classList.add('bg-purple-200', 'text-purple-900');
             break;
         case 'ready':
-            selectElement.classList.add('bg-green-100', 'text-green-800');
+            selectElement.classList.add('bg-orange-100', 'text-orange-800');
             break;
         case 'completed':
-            selectElement.classList.add('bg-green-100', 'text-green-800');
+            selectElement.classList.add('bg-green-200', 'text-green-900');
             break;
         case 'cancelled':
-            selectElement.classList.add('bg-red-100', 'text-red-800');
+            selectElement.classList.add('bg-red-200', 'text-red-900');
             break;
         default:
             selectElement.classList.add('bg-gray-100', 'text-gray-800');
@@ -279,35 +300,35 @@ function updateStatusSelectStyle(selectElement, status) {
     // Update warna untuk tema gelap juga
     if (selectElement.classList.contains('dark:bg-[#1E1E1C]')) {
         selectElement.classList.remove(
-            'dark:bg-[#3E3E1E]', 'dark:text-[#EDEDEC]',
-            'dark:bg-[#1E3E1C]', 'dark:text-[#EDEDEC]',
-            'dark:bg-[#1E1E3E]', 'dark:text-[#EDEDEC]',
-            'dark:bg-[#3E1E3E]', 'dark:text-[#EDEDEC]',
-            'dark:bg-[#3E1E1E]', 'dark:text-[#EDEDEC]',
-            'dark:bg-[#3E3E3E]', 'dark:text-[#EDEDEC]'
+            'dark:bg-yellow-600', 'dark:text-yellow-100',
+            'dark:bg-blue-800', 'dark:text-blue-100',
+            'dark:bg-purple-800', 'dark:text-purple-100',
+            'dark:bg-amber-700', 'dark:text-amber-50',
+            'dark:bg-green-800', 'dark:text-green-100',
+            'dark:bg-red-700', 'dark:text-red-50'
         );
         
         switch(status) {
             case 'pending_payment':
-                selectElement.classList.add('dark:bg-[#3E3E1E]');
+                selectElement.classList.add('dark:bg-yellow-600', 'dark:text-yellow-100'); // More yellow like warning light
                 break;
             case 'processing':
-                selectElement.classList.add('dark:bg-[#1E1E3E]');
+                selectElement.classList.add('dark:bg-[#1E3E1E]', 'dark:text-[#EDEDEC]');
                 break;
             case 'preparing':
-                selectElement.classList.add('dark:bg-[#1E3E1E]');
+                selectElement.classList.add('dark:bg-[#1E1E3E]', 'dark:text-[#EDEDEC]');
                 break;
             case 'ready':
-                selectElement.classList.add('dark:bg-[#1E3E1E]');
+                selectElement.classList.add('dark:bg-amber-700', 'dark:text-amber-50'); // More distinct amber
                 break;
             case 'completed':
-                selectElement.classList.add('dark:bg-[#1E3E1E]');
+                selectElement.classList.add('dark:bg-green-800', 'dark:text-green-100');
                 break;
             case 'cancelled':
-                selectElement.classList.add('dark:bg-[#3E1E1E]');
+                selectElement.classList.add('dark:bg-red-700', 'dark:text-red-50'); // More red
                 break;
             default:
-                selectElement.classList.add('dark:bg-[#3E3E3E]');
+                selectElement.classList.add('dark:bg-[#3E3E3E]', 'dark:text-[#EDEDEC]');
         }
     }
 }

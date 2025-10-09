@@ -131,7 +131,19 @@
                                 {{-- STATUS: min-w-32 --}}
                                 <td class="px-3 py-3 whitespace-nowrap min-w-32">
                                     <select
-                                        class="status-update px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800 w-full border border-gray-300 dark:bg-[#1E1E1C] dark:text-[#EDEDEC] dark:border-[#3E3E3A]"
+                                        class="status-update px-2 py-1 text-xs font-semibold rounded-full 
+                                        @php
+                                            $statusColors = [
+                                                'pending_payment' => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-600 dark:text-yellow-100',
+                                                'processing' => 'bg-blue-200 text-blue-900 dark:bg-blue-800 dark:text-blue-100',
+                                                'preparing' => 'bg-purple-200 text-purple-900 dark:bg-purple-800 dark:text-purple-100',
+                                                'ready' => 'bg-orange-100 text-orange-800 dark:bg-amber-700 dark:text-amber-50',
+                                                'completed' => 'bg-green-200 text-green-900 dark:bg-green-800 dark:text-green-100',
+                                                'cancelled' => 'bg-red-200 text-red-900 dark:bg-red-700 dark:text-red-50',
+                                            ];
+                                            echo $statusColors[$order->status] ?? 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200';
+                                        @endphp
+                                        w-full border border-gray-300 dark:border-[#3E3E3A]"
                                         data-order-number="{{ $order->order_number }}">
                                         <option value="pending_payment"
                                             {{ $order->status === 'pending_payment' ? 'selected' : '' }}>Pending Payment
@@ -293,24 +305,49 @@
                                 let bgColor = 'bg-gray-100 text-gray-800';
                                 switch (newStatus) {
                                     case 'pending_payment':
-                                    case 'processing':
-                                    case 'preparing':
                                         bgColor = 'bg-yellow-100 text-yellow-800';
                                         break;
+                                    case 'processing':
+                                        bgColor = 'bg-blue-200 text-blue-900';
+                                        break;
+                                    case 'preparing':
+                                        bgColor = 'bg-purple-200 text-purple-900';
+                                        break;
                                     case 'ready':
-                                        bgColor = 'bg-blue-100 text-blue-800';
+                                        bgColor = 'bg-orange-100 text-orange-800';
                                         break;
                                     case 'completed':
-                                        bgColor = 'bg-green-100 text-green-800';
+                                        bgColor = 'bg-green-200 text-green-900';
                                         break;
                                     case 'cancelled':
-                                        bgColor = 'bg-red-100 text-red-800';
+                                        bgColor = 'bg-red-200 text-red-900';
                                         break;
                                 }
 
                                 // Update the select to show the new status with the right color
-                                this.className =
-                                    `status-update px-2 py-1 text-xs font-semibold rounded-full ${bgColor} w-full border border-gray-300 dark:bg-[#1E1E1C] dark:text-[#EDEDEC] dark:border-[#3E3E3A]`;
+                                let darkModeClasses = 'dark:bg-[#1E1E1C] dark:text-[#EDEDEC] dark:border-[#3E3E3A]';
+                                switch (newStatus) {
+                                    case 'pending_payment':
+                                        darkModeClasses = 'dark:bg-yellow-600 dark:text-yellow-100 dark:border-[#3E3E3A]'; // More yellow like warning light
+                                        break;
+                                    case 'processing':
+                                        darkModeClasses = 'dark:bg-blue-800 dark:text-blue-100 dark:border-[#3E3E3A]';
+                                        break;
+                                    case 'preparing':
+                                        darkModeClasses = 'dark:bg-purple-800 dark:text-purple-100 dark:border-[#3E3E3A]';
+                                        break;
+                                    case 'ready':
+                                        darkModeClasses = 'dark:bg-amber-700 dark:text-amber-50 dark:border-[#3E3E3A]'; // Amber dark - more distinct
+                                        break;
+                                    case 'completed':
+                                        darkModeClasses = 'dark:bg-green-800 dark:text-green-100 dark:border-[#3E3E3A]';
+                                        break;
+                                    case 'cancelled':
+                                        darkModeClasses = 'dark:bg-red-700 dark:text-red-50 dark:border-[#3E3E3A]'; // More red/darker red
+                                        break;
+                                }
+                                
+                                this.className = `status-update px-2 py-1 text-xs font-semibold rounded-full ${bgColor} w-full border border-gray-300 ${darkModeClasses}`;
                                 this.innerHTML = `
                                     <option value="pending_payment" ${newStatus === 'pending_payment' ? 'selected' : ''}>Pending Payment</option>
                                     <option value="processing" ${newStatus === 'processing' ? 'selected' : ''}>Processing</option>
