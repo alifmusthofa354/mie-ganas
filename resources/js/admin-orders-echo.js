@@ -135,7 +135,7 @@ function attachStatusUpdateListeners(newRowElement) {
             }
 
             // Fetch order details via AJAX
-            fetch(`/api/admin/orders/${orderNumber}`)
+            fetch(`/admin/api/orders/${orderNumber}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
