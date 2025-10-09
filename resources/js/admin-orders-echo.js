@@ -141,17 +141,17 @@ function attachStatusUpdateListeners(newRowElement) {
                     if (data.success) {
                         const order = data.order;
 
-                        let itemsHtml = '';
+                        let modalItemsHtml = '';
                         if (order.order_items && order.order_items.length > 0) {
                             order.order_items.forEach(item => {
                                 // Hitung dan format total per item
                                 const itemTotal = (item.quantity * item.price)
                                     .toLocaleString('id-ID');
-                                itemsHtml +=
+                                modalItemsHtml +=
                                     `<li class="py-1 text-[#1b1b18] dark:text-[#EDEDEC]">${item.quantity}x ${item.name} - Rp ${itemTotal}</li>`;
                             });
                         } else {
-                            itemsHtml =
+                            modalItemsHtml =
                                 '<li class="py-1 text-[#1b1b18] dark:text-[#EDEDEC]">No items</li>';
                         }
 
@@ -169,59 +169,51 @@ function attachStatusUpdateListeners(newRowElement) {
                             hour12: false
                         });
 
-                        // Buat konten modal
+                        // Format tanggal di modal: 7/10/2025, 04.40.12
+                        const modalDateObj = new Date(order.created_at);
+                        const modalFormattedDate = modalDateObj.toLocaleDateString('id-ID', {
+                            day: 'numeric',
+                            month: 'numeric',
+                            year: 'numeric'
+                        });
+                        const modalFormattedTime = modalDateObj.toLocaleTimeString('id-ID', {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit',
+                            hour12: false
+                        }).replace(/:/g, '.');
+                        
+                        const finalDateTime = `${modalFormattedDate}, ${modalFormattedTime}`;
+
+                        // Format modal content to match original implementation
                         const modalContentHtml = `
-                            <div class="p-6">
-                                <div class="flex justify-between items-start mb-4">
-                                    <div>
-                                        <h3 class="text-lg font-semibold text-[#1b1b18] dark:text-[#EDEDEC]">Order Details</h3>
-                                        <p class="text-sm text-[#706f6c] dark:text-[#A1A09A]">Order Number: ${order.order_number}</p>
-                                    </div>
-                                    <button id="modal-close" class="text-[#706f6c] hover:text-[#1b1b18] dark:text-[#A1A09A] dark:hover:text-[#EDEDEC]">
-                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                        </svg>
-                                    </button>
+                            <div class="mb-4 text-[#1b1b18] dark:text-[#EDEDEC]">
+                                <h4 class="font-bold">Order #${order.order_number}</h4>
+                                <p class="text-sm text-[#706f6c] dark:text-[#A1A09A]">Customer: ${order.customer_name}</p>
+                                <p class="text-sm text-[#706f6c] dark:text-[#A1A09A]">Table: ${order.table_number}</p>
+                                <p class="text-sm text-[#706f6c] dark:text-[#A1A09A]">Status: ${order.status.replace('_', ' ')}</p>
+                                <p class="text-sm text-[#706f6c] dark:text-[#A1A09A]">Payment Method: ${order.payment_method === 'qris' ? 'QRIS' : 'Cash'}</p>
+                                <p class="text-sm text-[#706f6c] dark:text-[#A1A09A]">Date: ${finalDateTime}</p>
+                                ${order.notes ? `<p class="text-sm text-[#706f6c] dark:text-[#A1A09A] mt-2">Notes: ${order.notes}</p>` : ''}
+                            </div>
+                            <div class="mb-4">
+                                <h5 class="font-bold text-[#1b1b18] dark:text-[#EDEDEC]">Items:</h5>
+                                <ul class="list-disc list-inside">
+                                    ${modalItemsHtml}
+                                </ul>
+                            </div>
+                            <div class="border-t border-gray-200 dark:border-[#3E3E3A] pt-3 text-[#1b1b18] dark:text-[#EDEDEC]">
+                                <div class="flex justify-between py-1">
+                                    <span>Subtotal:</span>
+                                    <span class="font-semibold">Rp ${parseFloat(order.subtotal).toLocaleString('id-ID')}</span>
                                 </div>
-                                
-                                <div class="grid grid-cols-2 gap-4 mb-6 text-sm">
-                                    <div>
-                                        <p class="text-[#706f6c] dark:text-[#A1A09A]">Customer Name</p>
-                                        <p class="font-medium text-[#1b1b18] dark:text-[#EDEDEC]">${order.customer_name}</p>
-                                    </div>
-                                    <div>
-                                        <p class="text-[#706f6c] dark:text-[#A1A09A]">Table Number</p>
-                                        <p class="font-medium text-[#1b1b18] dark:text-[#EDEDEC]">${order.table_number}</p>
-                                    </div>
-                                    <div>
-                                        <p class="text-[#706f6c] dark:text-[#A1A09A]">Date & Time</p>
-                                        <p class="font-medium text-[#1b1b18] dark:text-[#EDEDEC]">${formattedDate}, ${formattedTime}</p>
-                                    </div>
-                                    <div>
-                                        <p class="text-[#706f6c] dark:text-[#A1A09A]">Status</p>
-                                        <p class="font-medium capitalize text-[#1b1b18] dark:text-[#EDEDEC]">${order.status.replace('_', ' ')}</p>
-                                    </div>
-                                    <div>
-                                        <p class="text-[#706f6c] dark:text-[#A1A09A]">Payment Method</p>
-                                        <p class="font-medium text-[#1b1b18] dark:text-[#EDEDEC]">${order.payment_method}</p>
-                                    </div>
-                                    <div>
-                                        <p class="text-[#706f6c] dark:text-[#A1A09A]">Total</p>
-                                        <p class="font-semibold text-[#1b1b18] dark:text-[#EDEDEC]">${formatToCurrency(order.total, 'IDR', 'id-ID')}</p>
-                                    </div>
+                                <div class="flex justify-between py-1">
+                                    <span>Tax:</span>
+                                    <span class="font-semibold">Rp ${parseFloat(order.tax).toLocaleString('id-ID')}</span>
                                 </div>
-                                
-                                <div class="mb-6">
-                                    <p class="text-[#706f6c] dark:text-[#A1A09A] mb-2">Order Items</p>
-                                    <ul class="space-y-1">
-                                        ${itemsHtml}
-                                    </ul>
-                                </div>
-                                
-                                <div class="flex justify-end">
-                                    <button id="modal-close-btn" class="px-4 py-2 bg-[#f53003] text-white rounded-lg hover:bg-[#d92902]">
-                                        Close
-                                    </button>
+                                <div class="flex justify-between py-1 font-bold text-lg border-t border-gray-200 dark:border-[#3E3E3A] pt-2">
+                                    <span>Total:</span>
+                                    <span class="text-[#f53003]">Rp ${parseFloat(order.total).toLocaleString('id-ID')}</span>
                                 </div>
                             </div>
                         `;
@@ -229,34 +221,6 @@ function attachStatusUpdateListeners(newRowElement) {
                         // Isi konten modal
                         if (modalContent) {
                             modalContent.innerHTML = modalContentHtml;
-                            
-                            // Tambahkan event listener untuk tombol close
-                            const modalCloseBtn = document.getElementById('modal-close-btn');
-                            if (modalCloseBtn) {
-                                modalCloseBtn.addEventListener('click', function() {
-                                    if (modal) {
-                                        modal.classList.add('hidden');
-                                    }
-                                });
-                            }
-                            
-                            const modalCloseIcon = document.getElementById('modal-close');
-                            if (modalCloseIcon) {
-                                modalCloseIcon.addEventListener('click', function() {
-                                    if (modal) {
-                                        modal.classList.add('hidden');
-                                    }
-                                });
-                            }
-                            
-                            // Tambahkan backdrop close
-                            if (modalBackdrop) {
-                                modalBackdrop.addEventListener('click', function() {
-                                    if (modal) {
-                                        modal.classList.add('hidden');
-                                    }
-                                });
-                            }
                         }
                     } else {
                         if (modalContent) {
