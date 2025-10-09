@@ -38,7 +38,7 @@ function createOrderRowHtml(order) {
             ${order.table_number}
         </td>
         <td class="px-3 py-3 whitespace-nowrap text-sm font-semibold text-[#1b1b18] dark:text-[#EDEDEC]">
-            ${orderTotal.replace('IDR', 'Rp')}
+        ${formatToCurrency(order.total, 'IDR', 'id-ID')}
         </td>
         <td class="px-3 py-3 whitespace-nowrap min-w-32">
             <select
@@ -106,4 +106,20 @@ if (typeof window.Echo !== 'undefined') {
         });
 } else {
     console.error("Laravel Echo is not defined. Ensure app.js is loaded correctly.");
+}
+
+//
+// Fungsi untuk mengubah angka menjadi format mata uang
+//
+function formatToCurrency(number, currencyCode, locale) {
+  // Membuat objek formatter
+  const formatter = new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency: currencyCode,
+    minimumFractionDigits: 0, // Mengatur agar tidak ada angka di belakang desimal (koma)
+    maximumFractionDigits: 0,
+  });
+
+  // Mengembalikan angka yang sudah diformat
+  return formatter.format(number);
 }
